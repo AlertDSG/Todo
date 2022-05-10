@@ -1,22 +1,18 @@
 import React, {ChangeEvent,KeyboardEvent, useState} from "react";
 import {Button} from "./Button";
-import {FilteredPropsType} from "../App";
+import {FilteredPropsType, TasksType} from "../App";
 import css from "./TodoList.module.css"
-
-type TasksType = {
-    id: string
-    title: string
-    isDone: boolean
-}
 
 type TodoListPropsType = {
     title: string
+    todoListID:string
     tasks: TasksType[]
     filter: FilteredPropsType
-    deleteTask: (tId: string) => void
-    addTask: (newTask: string) => void
-    filteredTasks: (filterValue: FilteredPropsType) => void
-    changeInputChecked: (tId: string, value: boolean) => void
+    removeTodoList: (todoListID: string) => void
+    deleteTask: (todoListID: string, tId: string) => void
+    addTask: (todoListID: string, newTask: string) => void
+    filteredTasks: (todoListID: string, filterValue: FilteredPropsType) => void
+    changeInputChecked: (todoListID: string, tId: string, value: boolean) => void
 }
 
 export const TodoList = (props: TodoListPropsType) => {
@@ -32,7 +28,7 @@ export const TodoList = (props: TodoListPropsType) => {
 
     const onClickButtonHandler = () => {
         if(newTask.trim() !== '') {
-            props.addTask(newTask)
+            props.addTask(props.todoListID, newTask)
             setNewTask('')
         } else {
             setError('Ahtung')
@@ -47,16 +43,20 @@ export const TodoList = (props: TodoListPropsType) => {
     }
 
     const onChangeInputCheckedHandler = (tId: string, value: boolean) => {
-        props.changeInputChecked(tId, value)
+        props.changeInputChecked(props.todoListID, tId, value)
     }
 
     const deleteTask = (tId: string) => {
-        props.deleteTask(tId)
+        props.deleteTask(props.todoListID, tId)
+    }
+
+    const onClickDeleteTDHandler = () => {
+      props.removeTodoList(props.todoListID)
     }
 
     return (
         <div>
-            <h3>{props.title}</h3>
+           <button onClick={onClickDeleteTDHandler}>X</button> <h3>{props.title}</h3>
             <div>
                 <input className={error ? css.error : ''}
                        value={newTask}
@@ -79,11 +79,11 @@ export const TodoList = (props: TodoListPropsType) => {
             </ul>
             <div>
                 <Button className={props.filter === 'all' ? css.active : ''}
-                        name={'All'} callback={()=>{props.filteredTasks('all')}}/>
+                        name={'All'} callback={()=>{props.filteredTasks(props.todoListID,'all')}}/>
                 <Button className={props.filter === 'active' ? css.active : ''}
-                        name={'Active'} callback={()=>{props.filteredTasks('active')}}/>
+                        name={'Active'} callback={()=>{props.filteredTasks(props.todoListID,'active')}}/>
                 <Button className={props.filter === 'completed' ? css.active : ''}
-                        name={'Completed'} callback={()=>{props.filteredTasks('completed')}}/>
+                        name={'Completed'} callback={()=>{props.filteredTasks(props.todoListID,'completed')}}/>
             </div>
         </div>
     )
