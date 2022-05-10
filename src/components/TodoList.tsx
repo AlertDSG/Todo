@@ -1,7 +1,8 @@
-import React, {ChangeEvent,KeyboardEvent, useState} from "react";
+import React, {ChangeEvent} from "react";
 import {Button} from "./Button";
 import {FilteredPropsType, TasksType} from "../App";
 import css from "./TodoList.module.css"
+import { UniversalFormInput } from "./UniversalFormInput";
 
 type TodoListPropsType = {
     title: string
@@ -17,30 +18,12 @@ type TodoListPropsType = {
 
 export const TodoList = (props: TodoListPropsType) => {
 
-    const [newTask, setNewTask] = useState<string>('')
-    const [error, setError] = useState<string|null>('')
 
 
-    const onChangeInputHandler = ( e: ChangeEvent<HTMLInputElement>) => {
-        setError(null)
-        setNewTask(e.currentTarget.value)
-    }
 
-    const onClickButtonHandler = () => {
-        if(newTask.trim() !== '') {
-            props.addTask(props.todoListID, newTask)
-            setNewTask('')
-        } else {
-            setError('Ahtung')
-        }
 
-    }
 
-    const onKeyPressHandler = (e: KeyboardEvent<HTMLInputElement>) => {
-        if(e.key === 'Enter') {
-            onClickButtonHandler()
-        }
-    }
+
 
     const onChangeInputCheckedHandler = (tId: string, value: boolean) => {
         props.changeInputChecked(props.todoListID, tId, value)
@@ -57,14 +40,7 @@ export const TodoList = (props: TodoListPropsType) => {
     return (
         <div>
            <button onClick={onClickDeleteTDHandler}>X</button> <h3>{props.title}</h3>
-            <div>
-                <input className={error ? css.error : ''}
-                       value={newTask}
-                       onChange={onChangeInputHandler}
-                        onKeyPress={onKeyPressHandler}/>
-                <button onClick={onClickButtonHandler}>+</button>
-                <div className={error ? css.errorMessage : ''}>{error}</div>
-            </div>
+            <UniversalFormInput className={css.error} callBack={(newTask)=>props.addTask(props.todoListID, newTask)}/>
             <ul>
                 {
                     props.tasks.map(t =>{

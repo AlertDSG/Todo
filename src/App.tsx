@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {v1} from 'uuid';
 import './App.css';
 import {TodoList} from "./components/TodoList";
+import { UniversalFormInput } from './components/UniversalFormInput';
 
 export type FilteredPropsType = 'all' | 'active' | 'completed'
 
@@ -67,11 +68,21 @@ function App() {
 
     const removeTodoList = (todoListID: string) => {
       setTodoLists(todoLists.filter( tl => tl.id !== todoListID))
+        const copyTasks = {...tasks}
+        delete copyTasks[todoListID]
+        setTasks(copyTasks)
 
+    }
+
+    const addNewTodoList = (newTodoList: string) => {
+      const newID = v1();
+        setTodoLists([...todoLists, {id: newID, title: newTodoList, filter:'all'}])
+        setTasks({...tasks, [newID]: []})
     }
 
     return (
         <div className="App">
+            <UniversalFormInput callBack={addNewTodoList}/>
             {
                 todoLists.map(t => {
 
