@@ -1,12 +1,15 @@
 import React, {ChangeEvent} from "react";
-import {Button} from "./Button";
 import {FilteredPropsType, TasksType} from "../App";
 import css from "./TodoList.module.css"
-import { UniversalFormInput } from "./UniversalFormInput";
+import {UniversalFormInput} from "./UniversalFormInput";
+import {Button, Checkbox, IconButton,List, ListItem} from "@material-ui/core";
+import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
+
+
 
 type TodoListPropsType = {
     title: string
-    todoListID:string
+    todoListID: string
     tasks: TasksType[]
     filter: FilteredPropsType
     removeTodoList: (todoListID: string) => void
@@ -18,13 +21,6 @@ type TodoListPropsType = {
 
 export const TodoList = (props: TodoListPropsType) => {
 
-
-
-
-
-
-
-
     const onChangeInputCheckedHandler = (tId: string, value: boolean) => {
         props.changeInputChecked(props.todoListID, tId, value)
     }
@@ -34,32 +30,58 @@ export const TodoList = (props: TodoListPropsType) => {
     }
 
     const onClickDeleteTDHandler = () => {
-      props.removeTodoList(props.todoListID)
+        props.removeTodoList(props.todoListID)
     }
+
+    const buttonAll = props.filter === 'all' ? "secondary" : 'primary'
+    const buttonActive = props.filter === 'active' ? "secondary" : 'primary'
+    const buttonCompleted = props.filter === 'completed' ? "secondary" : 'primary'
 
     return (
         <div>
-           <button onClick={onClickDeleteTDHandler}>X</button> <h3>{props.title}</h3>
-            <UniversalFormInput className={css.error} callBack={(newTask)=>props.addTask(props.todoListID, newTask)}/>
-            <ul>
+
+            <h3><IconButton onClick={onClickDeleteTDHandler}>
+                <DeleteOutlineIcon color={'secondary'}/>
+            </IconButton>{props.title}</h3>
+            <UniversalFormInput className={css.error} callBack={(newTask) => props.addTask(props.todoListID, newTask)}/>
+            <List disablePadding dense>
                 {
-                    props.tasks.map(t =>{
+                    props.tasks.map(t => {
+
                         return (
-                        <li key={t.id} className={t.isDone ? css.isDone : ''}><button onClick={()=>deleteTask(t.id)}>x</button>
-                            <input onChange={(e: ChangeEvent<HTMLInputElement>) => onChangeInputCheckedHandler(t.id, e.currentTarget.checked)} type="checkbox" checked={t.isDone}/>
-                            <span>{t.title}</span>
-                        </li>
-                        )})
+                            <ListItem divider dense disableGutters key={t.id} className={t.isDone ? css.isDone : ''}>
+                                <IconButton onClick={() => deleteTask(t.id)}>
+                                    <DeleteOutlineIcon color={'secondary'} fontSize={'small'} />
+                                </IconButton>
+                                <Checkbox
+                                    size={'small'}
+                                    onChange={(e: ChangeEvent<HTMLInputElement>) => onChangeInputCheckedHandler(t.id, e.currentTarget.checked)}
+                                    checked={t.isDone}
+                                    color={'primary'}/>
+                                <span>{t.title}</span>
+                            </ListItem>
+                        )
+                    })
                 }
 
-            </ul>
+            </List>
             <div>
-                <Button className={props.filter === 'all' ? css.active : ''}
-                        name={'All'} callback={()=>{props.filteredTasks(props.todoListID,'all')}}/>
-                <Button className={props.filter === 'active' ? css.active : ''}
-                        name={'Active'} callback={()=>{props.filteredTasks(props.todoListID,'active')}}/>
-                <Button className={props.filter === 'completed' ? css.active : ''}
-                        name={'Completed'} callback={()=>{props.filteredTasks(props.todoListID,'completed')}}/>
+                <Button color={buttonAll}
+                        size={'small'}
+                        onClick={() => {props.filteredTasks(props.todoListID, 'all')
+                        }}>
+                    All
+                </Button>
+                <Button color={buttonActive}
+                        size={'small'}
+                        onClick={() => {
+                            props.filteredTasks(props.todoListID, 'active')
+                        }}>Active</Button>
+                <Button color={buttonCompleted}
+                        size={'small'}
+                        onClick={() => {
+                            props.filteredTasks(props.todoListID, 'completed')
+                        }}>Completed</Button>
             </div>
         </div>
     )
