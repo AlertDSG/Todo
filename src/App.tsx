@@ -19,7 +19,7 @@ export type TaskForTodoList = {
     [todoListID: string]: TasksType[],
 }
 
-type TodoListType = {
+export type TodoListType = {
     id: string,
     title: string,
     filter: FilteredPropsType
