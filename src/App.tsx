@@ -69,6 +69,10 @@ function App() {
         setTasks({...tasks, [todoListID]: tasks[todoListID].map(t => t.id === tId ? {...t, isDone: value} : t)})
     }
 
+    const changeTaskTitle = (todoListID: string, tId: string, title: string) => {
+        setTasks({...tasks, [todoListID]: tasks[todoListID].map(t => t.id === tId ? {...t, title} : t)})
+    }
+
     const removeTodoList = (todoListID: string) => {
         setTodoLists(todoLists.filter(tl => tl.id !== todoListID))
         const copyTasks = {...tasks}
@@ -81,6 +85,9 @@ function App() {
         const newID = v1();
         setTodoLists([...todoLists, {id: newID, title: newTodoList, filter: 'all'}])
         setTasks({...tasks, [newID]: []})
+    }
+    const changeTitleTodoLst = (todoListID: string, title: string) => {
+        setTodoLists(todoLists.map(tl => tl.id === todoListID ? {...tl, title} : tl))
     }
 
     const todolistItems = todoLists.map(t => {
@@ -95,12 +102,14 @@ function App() {
         }
 
         return (
-            <Grid  item key={t.id}>
+            <Grid item key={t.id}>
                 <Paper style={{margin: "20px", padding: "10px"}} elevation={3}>
                     <TodoList
                         todoListID={t.id}
                         title={t.title}
                         tasks={filterTasks}
+                        changeTitleTodoLst={changeTitleTodoLst}
+                        changeTaskTitle={changeTaskTitle}
                         removeTodoList={removeTodoList}
                         deleteTask={deleteTask}
                         filteredTasks={filteredTasks}

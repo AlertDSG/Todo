@@ -2,9 +2,9 @@ import React, {ChangeEvent} from "react";
 import {FilteredPropsType, TasksType} from "../App";
 import css from "./TodoList.module.css"
 import {UniversalFormInput} from "./UniversalFormInput";
-import {Button, Checkbox, IconButton,List, ListItem} from "@material-ui/core";
+import {Button, Checkbox, IconButton, List, ListItem} from "@material-ui/core";
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
-
+import {EditableSpan} from "./EditableSpan";
 
 
 type TodoListPropsType = {
@@ -15,6 +15,8 @@ type TodoListPropsType = {
     removeTodoList: (todoListID: string) => void
     deleteTask: (todoListID: string, tId: string) => void
     addTask: (todoListID: string, newTask: string) => void
+    changeTitleTodoLst: (todoListID: string, newTitle: string) => void
+    changeTaskTitle: (todoListID: string, tId: string, title: string) => void
     filteredTasks: (todoListID: string, filterValue: FilteredPropsType) => void
     changeInputChecked: (todoListID: string, tId: string, value: boolean) => void
 }
@@ -33,6 +35,14 @@ export const TodoList = (props: TodoListPropsType) => {
         props.removeTodoList(props.todoListID)
     }
 
+    const changeTitleForTask = (tId: string, value: string) => {
+        props.changeTaskTitle(props.todoListID, tId, value)
+    }
+
+    const changeTitleForTodoLst = (title: string) => {
+        props.changeTitleTodoLst(props.todoListID, title)
+    }
+
     const buttonAll = props.filter === 'all' ? "secondary" : 'primary'
     const buttonActive = props.filter === 'active' ? "secondary" : 'primary'
     const buttonCompleted = props.filter === 'completed' ? "secondary" : 'primary'
@@ -40,9 +50,12 @@ export const TodoList = (props: TodoListPropsType) => {
     return (
         <div>
 
-            <h3><IconButton onClick={onClickDeleteTDHandler}>
-                <DeleteOutlineIcon color={'secondary'}/>
-            </IconButton>{props.title}</h3>
+            <h3>
+                <IconButton onClick={onClickDeleteTDHandler}>
+                    <DeleteOutlineIcon color={'secondary'}/>
+                </IconButton>
+                <EditableSpan onChange={changeTitleForTodoLst} title={props.title}/>
+            </h3>
             <UniversalFormInput className={css.error} callBack={(newTask) => props.addTask(props.todoListID, newTask)}/>
             <List disablePadding dense>
                 {
@@ -51,14 +64,15 @@ export const TodoList = (props: TodoListPropsType) => {
                         return (
                             <ListItem divider dense disableGutters key={t.id} className={t.isDone ? css.isDone : ''}>
                                 <IconButton onClick={() => deleteTask(t.id)}>
-                                    <DeleteOutlineIcon color={'secondary'} fontSize={'small'} />
+                                    <DeleteOutlineIcon color={'secondary'} fontSize={'small'}/>
                                 </IconButton>
                                 <Checkbox
                                     size={'small'}
                                     onChange={(e: ChangeEvent<HTMLInputElement>) => onChangeInputCheckedHandler(t.id, e.currentTarget.checked)}
                                     checked={t.isDone}
                                     color={'primary'}/>
-                                <span>{t.title}</span>
+                                <EditableSpan onChange={(value: string) => changeTitleForTask(t.id, value)}
+                                              title={t.title}/>
                             </ListItem>
                         )
                     })
@@ -68,7 +82,8 @@ export const TodoList = (props: TodoListPropsType) => {
             <div>
                 <Button color={buttonAll}
                         size={'small'}
-                        onClick={() => {props.filteredTasks(props.todoListID, 'all')
+                        onClick={() => {
+                            props.filteredTasks(props.todoListID, 'all')
                         }}>
                     All
                 </Button>
