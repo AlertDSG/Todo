@@ -1,6 +1,6 @@
 import {v1} from "uuid";
 import {FilteredPropsType, TodoListType} from "../App";
-import { AddTaskAT, ChangeTaskAT, RemoveTaskAT} from "./tasks-reducer";
+import {AddTaskAT, ChangeTaskAT, ChangeTaskTitleAT, RemoveTaskAT} from "./tasks-reducer";
 
 
 export type ActionType =
@@ -11,6 +11,7 @@ export type ActionType =
     | RemoveTaskAT
     | AddTaskAT
     | ChangeTaskAT
+    | ChangeTaskTitleAT
 
 export const todoListsReducer = (todoLists: TodoListType[], action: ActionType): TodoListType[] => {
 
@@ -32,7 +33,7 @@ export const todoListsReducer = (todoLists: TodoListType[], action: ActionType):
 
 export const removeTodoListAC = (id: string) => ({type: 'REMOVE-TODOLIST', id: id}) as const
 export type RemoveTodoListAT = ReturnType<typeof removeTodoListAC>
-export const addTodoListAC = (title: string) => ({type: 'ADD-TODOLIST', title, todoListID: v1() }) as const
+export const addTodoListAC = (title: string) => ({type: 'ADD-TODOLIST', title, todoListID: v1()}) as const
 export type AddTodoListsAT = ReturnType<typeof addTodoListAC>
 export const changeTodoListAC = (id: string, title: string) => ({
     type: 'CHANGE-TODOLIST-TITLE',
