@@ -13,7 +13,9 @@ export type ActionType =
     | ChangeTaskAT
     | ChangeTaskTitleAT
 
-export const todoListsReducer = (todoLists: TodoListType[], action: ActionType): TodoListType[] => {
+const initialState : TodoListType[] = []
+
+export const todoListsReducer = (todoLists: TodoListType[] = initialState, action: ActionType): TodoListType[] => {
 
     switch (action.type) {
         case 'REMOVE-TODOLIST':
