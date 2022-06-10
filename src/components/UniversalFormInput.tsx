@@ -7,13 +7,14 @@ type UniversalFormInputPropsTpe = {
     className?: string
 }
 
-export const UniversalFormInput = (props: UniversalFormInputPropsTpe) => {
+export const UniversalFormInput = React.memo((props: UniversalFormInputPropsTpe) => {
+    console.log('AddItemForm called')
 
     const [newTask, setNewTask] = useState<string>('')
     const [error, setError] = useState<string | null>('')
 
     const onChangeInputHandler = (e: ChangeEvent<HTMLInputElement>) => {
-        setError(null)
+        !!error && setError(null)
         setNewTask(e.currentTarget.value)
     }
 
@@ -49,5 +50,5 @@ export const UniversalFormInput = (props: UniversalFormInputPropsTpe) => {
 
         </div>
     );
-};
+})
 

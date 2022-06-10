@@ -1,4 +1,4 @@
-import React, {ChangeEvent} from "react";
+import React, {ChangeEvent, useCallback} from "react";
 import {FilteredPropsType, TasksType} from "../App";
 import css from "./TodoList.module.css"
 import {UniversalFormInput} from "./UniversalFormInput";
@@ -12,11 +12,13 @@ import {addTaskAC, changeTaskStatusAC, changeTaskTitleAC, removeTaskAC } from ".
 import {changeFilterTodoListAC, changeTodoListAC, removeTodoListAC } from "../reducers/todoLists-reducer";
 
 
+
 type TodoListPropsType = {
     todoList: TodoListType
 }
 
-export const TodoListWithRedux : React.FC<TodoListPropsType> =  ({todoList}) => {
+export const TodoListWithRedux : React.FC<TodoListPropsType> =  React.memo(({todoList}) => {
+    console.log('Todolist called')
 
     let tasks = useSelector<AppRootStateType, TasksType[]>(state => state.tasks[todoList.id])
     const dispatch = useDispatch()
@@ -44,9 +46,12 @@ export const TodoListWithRedux : React.FC<TodoListPropsType> =  ({todoList}) => 
         dispatch(changeTaskTitleAC(todoList.id, tId, value))
     }
 
-    const changeTitleForTodoLst = (title: string) => {
+    const changeTitleForTodoList = useCallback((title: string) => {
         dispatch(changeTodoListAC(todoList.id, title))
-    }
+    }, [todoList.id])
+    const addTask = useCallback ((value: string) => {
+        dispatch(addTaskAC(todoList.id, value))
+    }, [todoList.id])
 
     const buttonAll = todoList.filter === 'all' ? "secondary" : 'primary'
     const buttonActive = todoList.filter === 'active' ? "secondary" : 'primary'
@@ -59,9 +64,9 @@ export const TodoListWithRedux : React.FC<TodoListPropsType> =  ({todoList}) => 
                 <IconButton onClick={onClickDeleteTDHandler}>
                     <DeleteOutlineIcon color={'secondary'}/>
                 </IconButton>
-                <EditableSpan onChange={changeTitleForTodoLst} title={todoList.title}/>
+                <EditableSpan onChange={changeTitleForTodoList} title={todoList.title}/>
             </h3>
-            <UniversalFormInput className={css.error} callBack={(newTask) =>  dispatch(addTaskAC(todoList.id, newTask))}/>
+            <UniversalFormInput className={css.error} callBack={addTask}/>
             <List disablePadding dense>
                 {
                     tasks.map(t => {
@@ -106,4 +111,4 @@ export const TodoListWithRedux : React.FC<TodoListPropsType> =  ({todoList}) => 
         </div>
     )
 
-}
+})

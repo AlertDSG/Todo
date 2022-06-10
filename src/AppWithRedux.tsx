@@ -1,6 +1,6 @@
 import {AppBar, Container, Grid, IconButton, Paper, Toolbar, Typography} from '@material-ui/core';
 import {Menu} from '@material-ui/icons';
-import React, {useReducer, useState} from 'react';
+import React, {useCallback, useReducer, useState} from 'react';
 import {v1} from 'uuid';
 import './App.css';
 import {Button} from "@material-ui/core";
@@ -34,9 +34,9 @@ function AppWithRedux() {
     const todoLists = useSelector<AppRootStateType, TodoListType[]>(state => state.todoLists)
     const dispatch = useDispatch()
 
-    const addNewTodoList = (newTodoList: string) => {
+    const addNewTodoList = useCallback((newTodoList: string) => {
         dispatch(addTodoListAC(newTodoList))
-    }
+    }, [])
 
     const todolistItems = todoLists.map(t => {
 
