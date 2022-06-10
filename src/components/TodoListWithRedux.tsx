@@ -7,17 +7,17 @@ import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import {EditableSpan} from "./EditableSpan";
 import {useSelector, useDispatch} from "react-redux";
 import {AppRootStateType} from "../state/store";
-import {TodoListType } from "../AppWithRedux";
-import {addTaskAC, changeTaskStatusAC, changeTaskTitleAC, removeTaskAC } from "../reducers/tasks-reducer";
-import {changeFilterTodoListAC, changeTodoListAC, removeTodoListAC } from "../reducers/todoLists-reducer";
-
+import {TodoListType} from "../AppWithRedux";
+import {addTaskAC, changeTaskStatusAC, changeTaskTitleAC, removeTaskAC} from "../reducers/tasks-reducer";
+import {changeFilterTodoListAC, changeTodoListAC, removeTodoListAC} from "../reducers/todoLists-reducer";
+import {Task} from "./Task";
 
 
 type TodoListPropsType = {
     todoList: TodoListType
 }
 
-export const TodoListWithRedux : React.FC<TodoListPropsType> =  React.memo(({todoList}) => {
+export const TodoListWithRedux: React.FC<TodoListPropsType> = React.memo(({todoList}) => {
     console.log('Todolist called')
 
     let tasks = useSelector<AppRootStateType, TasksType[]>(state => state.tasks[todoList.id])
@@ -30,26 +30,27 @@ export const TodoListWithRedux : React.FC<TodoListPropsType> =  React.memo(({tod
         tasks = tasks.filter(t => !t.isDone)
     }
 
-    const onChangeInputCheckedHandler = (tId: string, value: boolean) => {
+    const changeTaskStatus = useCallback((tId: string, value: boolean) => {
         dispatch(changeTaskStatusAC(todoList.id, tId, value))
-    }
+    }, [todoList.id])
 
-    const deleteTask = (tId: string) => {
+    const deleteTask = useCallback((tId: string) => {
         dispatch(removeTaskAC(todoList.id, tId))
-    }
+    }, [todoList.id])
 
     const onClickDeleteTDHandler = () => {
         dispatch(removeTodoListAC(todoList.id))
     }
 
-    const changeTitleForTask = (tId: string, value: string) => {
+    const changeTitleForTask = useCallback((tId: string, value: string) => {
         dispatch(changeTaskTitleAC(todoList.id, tId, value))
-    }
+    }, [todoList.id])
 
     const changeTitleForTodoList = useCallback((title: string) => {
         dispatch(changeTodoListAC(todoList.id, title))
     }, [todoList.id])
-    const addTask = useCallback ((value: string) => {
+
+    const addTask = useCallback((value: string) => {
         dispatch(addTaskAC(todoList.id, value))
     }, [todoList.id])
 
@@ -69,23 +70,14 @@ export const TodoListWithRedux : React.FC<TodoListPropsType> =  React.memo(({tod
             <UniversalFormInput className={css.error} callBack={addTask}/>
             <List disablePadding dense>
                 {
-                    tasks.map(t => {
+                    tasks.map(t => <Task key={t.id}
+                                         task={t}
+                                         deleteTask={deleteTask}
+                                         changeTaskStatus={changeTaskStatus}
+                                         changeTitleForTask={changeTitleForTask}
 
-                        return (
-                            <ListItem divider dense disableGutters key={t.id} className={t.isDone ? css.isDone : ''}>
-                                <IconButton onClick={() => deleteTask(t.id)}>
-                                    <DeleteOutlineIcon color={'secondary'} fontSize={'small'}/>
-                                </IconButton>
-                                <Checkbox
-                                    size={'small'}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => onChangeInputCheckedHandler(t.id, e.currentTarget.checked)}
-                                    checked={t.isDone}
-                                    color={'primary'}/>
-                                <EditableSpan onChange={(value: string) => changeTitleForTask(t.id, value)}
-                                              title={t.title}/>
-                            </ListItem>
-                        )
-                    })
+
+                    />)
                 }
 
             </List>
