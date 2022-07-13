@@ -8,7 +8,7 @@ import {EditableSpan} from "./EditableSpan";
 import {useSelector, useDispatch} from "react-redux";
 import {AppRootStateType} from "../state/store";
 import {TodoListType} from "../AppWithRedux";
-import {addTaskAC, changeTaskStatusAC, changeTaskTitleAC, removeTaskAC} from "../reducers/tasks-reducer";
+import {addTaskAC} from "../reducers/tasks-reducer";
 import {changeFilterTodoListAC, changeTodoListAC, removeTodoListAC} from "../reducers/todoLists-reducer";
 import {Task} from "./Task";
 
@@ -30,29 +30,17 @@ export const TodoListWithRedux: React.FC<TodoListPropsType> = React.memo(({todoL
         tasks = tasks.filter(t => !t.isDone)
     }
 
-    const changeTaskStatus = useCallback((tId: string, value: boolean) => {
-        dispatch(changeTaskStatusAC(todoList.id, tId, value))
-    }, [todoList.id])
-
-    const deleteTask = useCallback((tId: string) => {
-        dispatch(removeTaskAC(todoList.id, tId))
-    }, [todoList.id])
-
-    const onClickDeleteTDHandler = () => {
+    const onClickDeleteTDHandler = useCallback(() => {
         dispatch(removeTodoListAC(todoList.id))
-    }
-
-    const changeTitleForTask = useCallback((tId: string, value: string) => {
-        dispatch(changeTaskTitleAC(todoList.id, tId, value))
-    }, [todoList.id])
+    },[todoList.id, dispatch])
 
     const changeTitleForTodoList = useCallback((title: string) => {
         dispatch(changeTodoListAC(todoList.id, title))
-    }, [todoList.id])
+    }, [todoList.id, dispatch])
 
     const addTask = useCallback((value: string) => {
         dispatch(addTaskAC(todoList.id, value))
-    }, [todoList.id])
+    }, [todoList.id, dispatch])
 
     const buttonAll = todoList.filter === 'all' ? "secondary" : 'primary'
     const buttonActive = todoList.filter === 'active' ? "secondary" : 'primary'
@@ -71,12 +59,8 @@ export const TodoListWithRedux: React.FC<TodoListPropsType> = React.memo(({todoL
             <List disablePadding dense>
                 {
                     tasks.map(t => <Task key={t.id}
+                                         todoListId={todoList.id}
                                          task={t}
-                                         deleteTask={deleteTask}
-                                         changeTaskStatus={changeTaskStatus}
-                                         changeTitleForTask={changeTitleForTask}
-
-
                     />)
                 }
 

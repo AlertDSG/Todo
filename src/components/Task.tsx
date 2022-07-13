@@ -4,39 +4,44 @@ import { EditableSpan } from './EditableSpan';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import css from "./TodoList.module.css"
 import { TasksType } from '../AppWithRedux';
+import { useDispatch } from 'react-redux';
+import {changeTaskStatusAC, changeTaskTitleAC, removeTaskAC } from '../reducers/tasks-reducer';
 
 type OnlyTaskType ={
     task: TasksType
-    deleteTask: (tId: string) => void
-    changeTaskStatus: (tId: string, value: boolean) => void
-    changeTitleForTask: (tId: string, value: string) => void
+    todoListId: string
 }
 
-export const Task = React.memo((props: OnlyTaskType) => {
+export const Task: React.FC<OnlyTaskType> = React.memo(({task, todoListId}) => {
 
-    const deleteTask = () => {
-      props.deleteTask(props.task.id)
-    }
+    const dispatch = useDispatch()
 
-    const onChangeInputCheckedHandler = (e: ChangeEvent<HTMLInputElement>) => {
-        props.changeTaskStatus(props.task.id, e.currentTarget.checked)
-    }
+    const deleteTask = useCallback(() => {
+        dispatch(removeTaskAC(todoListId, task.id))
+    },[dispatch, todoListId, task.id])
+
+    const onChangeInputCheckedHandler = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+        dispatch(changeTaskStatusAC(todoListId, task.id, e.currentTarget.checked))
+
+    },[dispatch, task.id, todoListId])
+
     const changeTitleForTask = useCallback((value: string) => {
-      props.changeTitleForTask(props.task.id, value)
-    }, [props.task.id])
+        dispatch(changeTaskTitleAC(todoListId, task.id, value))
+
+    }, [todoListId,task.id, dispatch])
 
     return (
-        <ListItem divider dense disableGutters className={props.task.isDone ? css.isDone : ''}>
+        <ListItem divider dense disableGutters className={task.isDone ? css.isDone : ''}>
             <IconButton onClick={deleteTask}>
                 <DeleteOutlineIcon color={'secondary'} fontSize={'small'}/>
             </IconButton>
             <Checkbox
                 size={'small'}
                 onChange={onChangeInputCheckedHandler}
-                checked={props.task.isDone}
+                checked={task.isDone}
                 color={'primary'}/>
             <EditableSpan onChange={changeTitleForTask}
-                          title={props.task.title}/>
+                          title={task.title}/>
         </ListItem>
     )
 
