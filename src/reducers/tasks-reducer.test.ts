@@ -1,3 +1,6 @@
+export const a = 0
+
+
 // import {addTaskAC,changeTaskStatusAC, changeTaskTitleAC, removeTaskAC, tasksReducer} from './tasks-reducer';
 // import {TaskForTodoList} from '../App';
 // import { v1 } from 'uuid';

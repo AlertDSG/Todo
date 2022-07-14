@@ -4,10 +4,9 @@ import React, {useCallback, useEffect} from 'react';
 import './App.css';
 import {Button} from "@material-ui/core";
 import {UniversalFormInput} from './components/UniversalFormInput';
-import {addTodoListAC, setTodoListsTC} from './reducers/todoLists-reducer';
-import {useDispatch, useSelector} from 'react-redux';
-import {AppRootStateType} from './state/store'
+import {addTodoListTC, setTodoListsTC} from './reducers/todoLists-reducer';
 import { TodoListWithRedux } from './components/TodoListWithRedux';
+import {useAppDispatch, useAppSelector} from "./app/hooks/hooks";
 
 export type FilteredPropsType = 'all' | 'active' | 'completed'
 
@@ -15,10 +14,6 @@ export type TasksType = {
     id: string
     title: string
     isDone: boolean
-}
-
-export type TaskForTodoList = {
-    [todoListID: string]: TasksType[],
 }
 
 export type TodoListType = {
@@ -29,16 +24,17 @@ export type TodoListType = {
 
 function AppWithRedux() {
 
-    const todoLists = useSelector<AppRootStateType, TodoListType[]>(state => state.todoLists)
-    const dispatch = useDispatch()
+    const todoLists = useAppSelector(state => state.todoLists)
+    const dispatch = useAppDispatch()
 
     useEffect(() => {
-        setTodoListsTC()
-    },[])
+
+        dispatch(setTodoListsTC())
+    },[dispatch])
 
     const addNewTodoList = useCallback((newTodoList: string) => {
-        dispatch(addTodoListAC(newTodoList))
-    }, [])
+        dispatch(addTodoListTC(newTodoList))
+    }, [dispatch])
 
     const todolistItems = todoLists.map(t => {
 

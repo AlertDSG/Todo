@@ -1,8 +1,11 @@
-import {v1} from "uuid";
-import {FilteredPropsType, TodoListType} from "../App";
-import {AddTaskAT, ChangeTaskAT, ChangeTaskTitleAT, RemoveTaskAT} from "./tasks-reducer";
-import {todoListsApi} from "../api/todoList-api";
+import {FilteredPropsType} from "../App";
+import {todoListsApi, TodoListsType} from "../api/todoList-api";
 import {AppThunk} from "../state/store";
+
+export type FilterValuesType = 'all' | 'active' | 'completed';
+export type TodolistDomainType = TodoListsType & {
+    filter: FilterValuesType
+}
 
 
 export type TodoListActionType =
@@ -10,31 +13,32 @@ export type TodoListActionType =
     | AddTodoListsAT
     | ChangeTodoListsAT
     | ChangeFilterTodoListsAT
+    | SetTodoListsAT
 
+const initialState: TodolistDomainType[] = []
 
-const initialState : TodoListType[] = []
-
-export const todoListsReducer = (todoLists: TodoListType[] = initialState, action: TodoListActionType): TodoListType[] => {
+export const todoListsReducer = (state: TodolistDomainType[] = initialState, action: TodoListActionType): TodolistDomainType[] => {
 
     switch (action.type) {
+        case 'SET-TODOLISTS':
+            return action.todoLists.map(tl => ({...tl, filter: 'all'}))
         case 'REMOVE-TODOLIST':
-            return todoLists.filter(tl => tl.id !== action.id)
+            return state.filter(tl => tl.id !== action.id)
         case 'ADD-TODOLIST':
-            return [...todoLists, {id: action.todoListID, title: action.title, filter: 'all'}]
+            return [{...action.todoList, filter: 'all'},...state]
         case 'CHANGE-TODOLIST-TITLE':
-            return todoLists.map(tl => tl.id === action.id ? {...tl, title: action.title} : tl)
+            return state.map(tl => tl.id === action.id ? {...tl, title: action.title} : tl)
         case 'CHANGE-TODOLIST-FILTER':
-            const filteredTodolist = todoLists.map(tl => tl.id === action.id ? {...tl, filter: action.filter} : tl)
-            return filteredTodolist
+            return state.map(tl => tl.id === action.id ? {...tl, filter: action.filter} : tl)
         default:
-            return todoLists
+            return state
     }
 
 }
 
 export const removeTodoListAC = (id: string) => ({type: 'REMOVE-TODOLIST', id}) as const
 export type RemoveTodoListAT = ReturnType<typeof removeTodoListAC>
-export const addTodoListAC = (title: string) => ({type: 'ADD-TODOLIST', title, todoListID: v1()}) as const
+export const addTodoListAC = (todoList: TodoListsType) => ({type: 'ADD-TODOLIST', todoList}) as const
 export type AddTodoListsAT = ReturnType<typeof addTodoListAC>
 export const changeTodoListAC = (id: string, title: string) => ({
     type: 'CHANGE-TODOLIST-TITLE',
@@ -49,11 +53,47 @@ export const changeFilterTodoListAC = (id: string, filter: FilteredPropsType) =>
 }) as const
 export type ChangeFilterTodoListsAT = ReturnType<typeof changeFilterTodoListAC>
 
-export const setTodoListsTC = ():AppThunk => (dispatch) => {
+export const setTodoListsAC = (todoLists: TodoListsType[]) => ({
+    type: 'SET-TODOLISTS',
+    todoLists
+}) as const
+export type SetTodoListsAT = ReturnType<typeof setTodoListsAC>
+
+export const setTodoListsTC = (): AppThunk => (dispatch) => {
 
     todoListsApi.getTodoLists()
         .then(res => {
-            console.log(res.data)
+            dispatch(setTodoListsAC(res.data))
         })
 
+}
+
+export const addTodoListTC = (title: string): AppThunk => (dispatch) => {
+
+    todoListsApi.createTodoLists(title)
+        .then(res => {
+            dispatch(addTodoListAC(res.data.data.item))
+        })
+
+}
+
+
+export const updateTodoListTC = (id: string, title: string): AppThunk => (dispatch) => {
+
+    todoListsApi.updateTodolist(id, title)
+        .then(res => {
+            if(res.data.resultCode === 0){
+                dispatch(changeTodoListAC(id, title))
+            }
+        })
+}
+
+export const deleteTodoListTC = (id: string): AppThunk => (dispatch) => {
+
+    todoListsApi.deleteTodolist(id)
+        .then(res => {
+            if(res.data.resultCode === 0){
+                dispatch(removeTodoListAC(id))
+            }
+        })
 }

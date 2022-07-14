@@ -1,3 +1,5 @@
+export let b = 3
+
 // import {ActionType, todoListsReducer} from './todoLists-reducer';
 // import {v1} from 'uuid';
 // import {FilteredPropsType, TodoListType} from '../App';

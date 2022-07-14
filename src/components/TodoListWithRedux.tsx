@@ -1,16 +1,15 @@
-import React, {ChangeEvent, useCallback} from "react";
-import {FilteredPropsType, TasksType} from "../App";
+import React, {useCallback, useEffect} from "react";
+import {TasksType} from "../App";
 import css from "./TodoList.module.css"
 import {UniversalFormInput} from "./UniversalFormInput";
-import {Button, Checkbox, IconButton, List, ListItem} from "@material-ui/core";
+import {Button,IconButton, List,} from "@material-ui/core";
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import {EditableSpan} from "./EditableSpan";
-import {useSelector, useDispatch} from "react-redux";
-import {AppRootStateType} from "../state/store";
 import {TodoListType} from "../AppWithRedux";
-import {addTaskAC} from "../reducers/tasks-reducer";
-import {changeFilterTodoListAC, changeTodoListAC, removeTodoListAC} from "../reducers/todoLists-reducer";
+import {changeFilterTodoListAC, deleteTodoListTC, updateTodoListTC} from "../reducers/todoLists-reducer";
 import {Task} from "./Task";
+import {useAppSelector, useAppDispatch} from "../app/hooks/hooks";
+import {createTasksTC, setTasksTC} from "../reducers/tasks-reducer";
 
 
 type TodoListPropsType = {
@@ -18,28 +17,31 @@ type TodoListPropsType = {
 }
 
 export const TodoListWithRedux: React.FC<TodoListPropsType> = React.memo(({todoList}) => {
-    console.log('Todolist called')
 
-    let tasks = useSelector<AppRootStateType, TasksType[]>(state => state.tasks[todoList.id])
-    const dispatch = useDispatch()
+    useEffect(() => {
+        dispatch(setTasksTC(todoList.id))
+    },[])
+
+    let tasks = useAppSelector(state => state.tasks[todoList.id])
+    const dispatch = useAppDispatch()
 
     if (todoList.filter === 'completed') {
-        tasks = tasks.filter(t => t.isDone)
+        tasks = tasks.filter(t => t.status)
     }
     if (todoList.filter === 'active') {
-        tasks = tasks.filter(t => !t.isDone)
+        tasks = tasks.filter(t => !t.status)
     }
 
     const onClickDeleteTDHandler = useCallback(() => {
-        dispatch(removeTodoListAC(todoList.id))
+        dispatch(deleteTodoListTC(todoList.id))
     },[todoList.id, dispatch])
 
     const changeTitleForTodoList = useCallback((title: string) => {
-        dispatch(changeTodoListAC(todoList.id, title))
+         dispatch(updateTodoListTC(todoList.id, title))
     }, [todoList.id, dispatch])
 
     const addTask = useCallback((value: string) => {
-        dispatch(addTaskAC(todoList.id, value))
+         dispatch(createTasksTC(todoList.id,value))
     }, [todoList.id, dispatch])
 
     const buttonAll = todoList.filter === 'all' ? "secondary" : 'primary'

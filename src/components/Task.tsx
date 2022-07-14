@@ -3,42 +3,43 @@ import React, {ChangeEvent, useCallback} from 'react';
 import { EditableSpan } from './EditableSpan';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import css from "./TodoList.module.css"
-import { TasksType } from '../AppWithRedux';
-import { useDispatch } from 'react-redux';
-import {changeTaskStatusAC, changeTaskTitleAC, removeTaskAC } from '../reducers/tasks-reducer';
+import {TaskStatuses, TaskType} from '../api/todoList-api'
+import {deleteTaskTC, updateTasksTC} from "../reducers/tasks-reducer";
+import {useAppDispatch} from "../app/hooks/hooks";
 
 type OnlyTaskType ={
-    task: TasksType
+    task: TaskType
     todoListId: string
 }
 
 export const Task: React.FC<OnlyTaskType> = React.memo(({task, todoListId}) => {
 
-    const dispatch = useDispatch()
+    const dispatch = useAppDispatch()
 
     const deleteTask = useCallback(() => {
-        dispatch(removeTaskAC(todoListId, task.id))
+         dispatch(deleteTaskTC(todoListId, task.id))
     },[dispatch, todoListId, task.id])
 
     const onChangeInputCheckedHandler = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-        dispatch(changeTaskStatusAC(todoListId, task.id, e.currentTarget.checked))
+        console.log(e.currentTarget.checked)
+         dispatch(updateTasksTC(task.id,{status: e.currentTarget.checked ? TaskStatuses.Completed : TaskStatuses.New}, todoListId))
 
     },[dispatch, task.id, todoListId])
 
-    const changeTitleForTask = useCallback((value: string) => {
-        dispatch(changeTaskTitleAC(todoListId, task.id, value))
+    const changeTitleForTask = useCallback((title: string) => {
+        dispatch(updateTasksTC(task.id,{title}, todoListId))
 
     }, [todoListId,task.id, dispatch])
 
     return (
-        <ListItem divider dense disableGutters className={task.isDone ? css.isDone : ''}>
+        <ListItem divider dense disableGutters className={task.status === TaskStatuses.Completed ? css.isDone : ''}>
             <IconButton onClick={deleteTask}>
                 <DeleteOutlineIcon color={'secondary'} fontSize={'small'}/>
             </IconButton>
             <Checkbox
                 size={'small'}
                 onChange={onChangeInputCheckedHandler}
-                checked={task.isDone}
+                checked={task.status === TaskStatuses.Completed}
                 color={'primary'}/>
             <EditableSpan onChange={changeTitleForTask}
                           title={task.title}/>
