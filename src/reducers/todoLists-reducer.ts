@@ -1,21 +1,20 @@
 import {v1} from "uuid";
 import {FilteredPropsType, TodoListType} from "../App";
 import {AddTaskAT, ChangeTaskAT, ChangeTaskTitleAT, RemoveTaskAT} from "./tasks-reducer";
+import {todoListsApi} from "../api/todoList-api";
+import {AppThunk} from "../state/store";
 
 
-export type ActionType =
+export type TodoListActionType =
     RemoveTodoListAT
     | AddTodoListsAT
     | ChangeTodoListsAT
     | ChangeFilterTodoListsAT
-    | RemoveTaskAT
-    | AddTaskAT
-    | ChangeTaskAT
-    | ChangeTaskTitleAT
+
 
 const initialState : TodoListType[] = []
 
-export const todoListsReducer = (todoLists: TodoListType[] = initialState, action: ActionType): TodoListType[] => {
+export const todoListsReducer = (todoLists: TodoListType[] = initialState, action: TodoListActionType): TodoListType[] => {
 
     switch (action.type) {
         case 'REMOVE-TODOLIST':
@@ -49,3 +48,12 @@ export const changeFilterTodoListAC = (id: string, filter: FilteredPropsType) =>
     filter
 }) as const
 export type ChangeFilterTodoListsAT = ReturnType<typeof changeFilterTodoListAC>
+
+export const setTodoListsTC = ():AppThunk => (dispatch) => {
+
+    todoListsApi.getTodoLists()
+        .then(res => {
+            console.log(res.data)
+        })
+
+}

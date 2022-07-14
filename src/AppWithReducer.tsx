@@ -72,14 +72,14 @@ function AppWithReducer() {
     }
 
     const removeTodoList = (todoListID: string) => {
-        dispatchToTasks(removeTodoListAC(todoListID))
+        // dispatchToTasks(removeTodoListAC(todoListID))
         dispatchToTodoLists(removeTodoListAC(todoListID))
 
     }
 
     const addNewTodoList = (newTodoList: string) => {
         const action = addTodoListAC(newTodoList)
-        dispatchToTasks(action)
+        // dispatchToTasks(action)
         dispatchToTodoLists(action)
     }
 
