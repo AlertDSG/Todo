@@ -1,6 +1,7 @@
 import {AddTodoListsAT, RemoveTodoListAT, SetTodoListsAT} from "./todoLists-reducer";
 import {TaskPriorities, TaskStatuses, TaskType, todoListsApi, UpdateTaskModelType} from "../api/todoList-api";
 import {AppRootStateType, AppThunk} from "../state/store";
+import {setAppStatusAC} from "../app/app-reducer";
 
 export type TasksStateType = {
     [key: string]: Array<TaskType>
@@ -90,25 +91,30 @@ export const setTasksAC = (tasks: Array<TaskType>, todolistId: string) => ({
 export type SetTasksAT = ReturnType<typeof setTasksAC>
 
 export const setTasksTC = (id: string): AppThunk => (dispatch) => {
-
+    dispatch(setAppStatusAC('loading'))
     todoListsApi.getTasks(id)
         .then(res => {
             dispatch(setTasksAC(res.data.items, id))
+            dispatch(setAppStatusAC('succeeded'))
         })
 }
 
 export const createTasksTC = (id: string, title: string): AppThunk => (dispatch) => {
-
+    dispatch(setAppStatusAC('loading'))
     todoListsApi.createTask(id, title)
         .then(res => {
             if(res.data.resultCode === 0){
                 dispatch(addTaskAC(res.data.data.item))
+                dispatch(setAppStatusAC('succeeded'))
             }
 
         })
 }
 
 export const updateTasksTC = (taskId: string, domainModel: UpdateDomainTaskModelType, todoListId: string): AppThunk => (dispatch, getState) => {
+
+    dispatch(setAppStatusAC('loading'))
+
     const state = getState()
     const task = state.tasks[todoListId].find(t => t.id === taskId)
 
@@ -125,17 +131,19 @@ export const updateTasksTC = (taskId: string, domainModel: UpdateDomainTaskModel
         .then(res => {
             if(res.data.resultCode === 0){
                 dispatch(updateTaskAC(taskId, model, todoListId))
+                dispatch(setAppStatusAC('succeeded'))
             }
 
         })
 }
 
 export const deleteTaskTC = ( todoListId: string, taskId: string): AppThunk => (dispatch) => {
-
+    dispatch(setAppStatusAC('loading'))
     todoListsApi.deleteTask(todoListId, taskId)
         .then(res => {
             if(res.data.resultCode === 0){
                 dispatch(removeTaskAC(todoListId, taskId))
+                dispatch(setAppStatusAC('succeeded'))
             }
 
         })

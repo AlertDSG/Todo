@@ -1,11 +1,11 @@
-import {Checkbox, IconButton, ListItem } from '@material-ui/core';
 import React, {ChangeEvent, useCallback} from 'react';
 import { EditableSpan } from './EditableSpan';
-import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import css from "./TodoList.module.css"
 import {TaskStatuses, TaskType} from '../api/todoList-api'
 import {deleteTaskTC, updateTasksTC} from "../reducers/tasks-reducer";
 import {useAppDispatch} from "../app/hooks/hooks";
+import {Checkbox, IconButton, ListItem} from "@mui/material";
+import {DeleteForeverOutlined} from "@mui/icons-material"
 
 type OnlyTaskType ={
     task: TaskType
@@ -34,7 +34,7 @@ export const Task: React.FC<OnlyTaskType> = React.memo(({task, todoListId}) => {
     return (
         <ListItem divider dense disableGutters className={task.status === TaskStatuses.Completed ? css.isDone : ''}>
             <IconButton onClick={deleteTask}>
-                <DeleteOutlineIcon color={'secondary'} fontSize={'small'}/>
+                <DeleteForeverOutlined color={'secondary'} fontSize={'small'}/>
             </IconButton>
             <Checkbox
                 size={'small'}

@@ -1,12 +1,23 @@
-import {AppBar, Container, Grid, IconButton, Paper, Toolbar, Typography} from '@material-ui/core';
-import {Menu} from '@material-ui/icons';
+
 import React, {useCallback, useEffect} from 'react';
 import './App.css';
-import {Button} from "@material-ui/core";
+
 import {UniversalFormInput} from './components/UniversalFormInput';
 import {addTodoListTC, setTodoListsTC} from './reducers/todoLists-reducer';
 import { TodoListWithRedux } from './components/TodoListWithRedux';
 import {useAppDispatch, useAppSelector} from "./app/hooks/hooks";
+import {
+    AppBar,
+    Button,
+    Container,
+    Grid,
+    IconButton,
+    LinearProgress, Menu,
+    Paper,
+    Toolbar,
+    Typography
+} from "@mui/material";
+import {MenuTwoTone} from "@mui/icons-material";
 
 export type FilteredPropsType = 'all' | 'active' | 'completed'
 
@@ -25,6 +36,7 @@ export type TodoListType = {
 function AppWithRedux() {
 
     const todoLists = useAppSelector(state => state.todoLists)
+    const status = useAppSelector(state => state.app.status)
     const dispatch = useAppDispatch()
 
     useEffect(() => {
@@ -54,7 +66,7 @@ function AppWithRedux() {
             <AppBar position="static">
                 <Toolbar style={{justifyContent: "space-between"}}>
                     <IconButton edge="start" color="inherit" aria-label="menu">
-                        <Menu/>
+                        <MenuTwoTone />
                     </IconButton>
                     <Typography variant="h6">
                         Todolists
@@ -62,6 +74,7 @@ function AppWithRedux() {
                     <Button color="inherit" variant={"outlined"}>Login</Button>
                 </Toolbar>
             </AppBar>
+            {status === 'loading' && <LinearProgress color="secondary" />}
             <Container fixed>
                 <Grid container>
                     <UniversalFormInput callBack={addNewTodoList}/>

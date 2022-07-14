@@ -1,15 +1,15 @@
 import React, {useCallback, useEffect} from "react";
-import {TasksType} from "../App";
 import css from "./TodoList.module.css"
 import {UniversalFormInput} from "./UniversalFormInput";
-import {Button,IconButton, List,} from "@material-ui/core";
-import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
+
 import {EditableSpan} from "./EditableSpan";
 import {TodoListType} from "../AppWithRedux";
 import {changeFilterTodoListAC, deleteTodoListTC, updateTodoListTC} from "../reducers/todoLists-reducer";
 import {Task} from "./Task";
 import {useAppSelector, useAppDispatch} from "../app/hooks/hooks";
 import {createTasksTC, setTasksTC} from "../reducers/tasks-reducer";
+import {Button, IconButton, List} from "@mui/material";
+import {DeleteForeverOutlined} from "@mui/icons-material";
 
 
 type TodoListPropsType = {
@@ -53,7 +53,7 @@ export const TodoListWithRedux: React.FC<TodoListPropsType> = React.memo(({todoL
 
             <h3>
                 <IconButton onClick={onClickDeleteTDHandler}>
-                    <DeleteOutlineIcon color={'secondary'}/>
+                    <DeleteForeverOutlined color={'secondary'} fontSize={'small'}/>
                 </IconButton>
                 <EditableSpan onChange={changeTitleForTodoList} title={todoList.title}/>
             </h3>
