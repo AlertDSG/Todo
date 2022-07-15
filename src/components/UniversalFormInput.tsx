@@ -1,9 +1,11 @@
 import React, {ChangeEvent, KeyboardEvent, useState} from 'react';
 import {IconButton, TextField} from "@mui/material";
+import {Add} from "@mui/icons-material";
 
 type UniversalFormInputPropsTpe = {
     callBack: (newTask: string) => void
     className?: string
+    disabled?: boolean
 }
 
 export const UniversalFormInput = React.memo((props: UniversalFormInputPropsTpe) => {
@@ -34,7 +36,7 @@ export const UniversalFormInput = React.memo((props: UniversalFormInputPropsTpe)
     }
 
     return (
-        <div>
+        <div style={{display: 'flex', alignItems: "center", gap: '5px', padding: '15px'}}>
             <TextField
                 size={'medium'}
                 className={error ? props.className : ''}
@@ -43,9 +45,11 @@ export const UniversalFormInput = React.memo((props: UniversalFormInputPropsTpe)
                 onKeyPress={onKeyPressHandler}
                 label={'Title'}
                 error={!!error}
-                helperText={!!error && 'Title is required!'}/>
-            <IconButton onClick={onClickButtonHandler}>
-                {/*<AddCircleOutlineIcon fontSize={'small'} color={'primary'}/>*/}
+                helperText={!!error && 'Title is required!'}
+                disabled={props.disabled}
+            />
+            <IconButton onClick={onClickButtonHandler} disabled={props.disabled}>
+                <Add fontSize={'small'} color={'primary'}/>
             </IconButton>
 
         </div>

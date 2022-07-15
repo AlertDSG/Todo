@@ -18,20 +18,7 @@ import {
     Typography
 } from "@mui/material";
 import {MenuTwoTone} from "@mui/icons-material";
-
-export type FilteredPropsType = 'all' | 'active' | 'completed'
-
-export type TasksType = {
-    id: string
-    title: string
-    isDone: boolean
-}
-
-export type TodoListType = {
-    id: string,
-    title: string,
-    filter: FilteredPropsType
-}
+import {ErrorSnackbar} from "./components/ErrorSnackbar/ErrorSnackbar";
 
 function AppWithRedux() {
 
@@ -63,6 +50,7 @@ function AppWithRedux() {
 
     return (
         <div className="App">
+            <ErrorSnackbar/>
             <AppBar position="static">
                 <Toolbar style={{justifyContent: "space-between"}}>
                     <IconButton edge="start" color="inherit" aria-label="menu">

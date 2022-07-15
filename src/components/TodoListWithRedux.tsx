@@ -3,8 +3,12 @@ import css from "./TodoList.module.css"
 import {UniversalFormInput} from "./UniversalFormInput";
 
 import {EditableSpan} from "./EditableSpan";
-import {TodoListType} from "../AppWithRedux";
-import {changeFilterTodoListAC, deleteTodoListTC, updateTodoListTC} from "../reducers/todoLists-reducer";
+import {
+    changeFilterTodoListAC,
+    deleteTodoListTC,
+    TodolistDomainType,
+    updateTodoListTC
+} from "../reducers/todoLists-reducer";
 import {Task} from "./Task";
 import {useAppSelector, useAppDispatch} from "../app/hooks/hooks";
 import {createTasksTC, setTasksTC} from "../reducers/tasks-reducer";
@@ -13,7 +17,7 @@ import {DeleteForeverOutlined} from "@mui/icons-material";
 
 
 type TodoListPropsType = {
-    todoList: TodoListType
+    todoList: TodolistDomainType
 }
 
 export const TodoListWithRedux: React.FC<TodoListPropsType> = React.memo(({todoList}) => {
@@ -23,6 +27,7 @@ export const TodoListWithRedux: React.FC<TodoListPropsType> = React.memo(({todoL
     },[])
 
     let tasks = useAppSelector(state => state.tasks[todoList.id])
+
     const dispatch = useAppDispatch()
 
     if (todoList.filter === 'completed') {
@@ -48,16 +53,16 @@ export const TodoListWithRedux: React.FC<TodoListPropsType> = React.memo(({todoL
     const buttonActive = todoList.filter === 'active' ? "secondary" : 'primary'
     const buttonCompleted = todoList.filter === 'completed' ? "secondary" : 'primary'
 
+
     return (
         <div>
-
             <h3>
-                <IconButton onClick={onClickDeleteTDHandler}>
+                <IconButton onClick={onClickDeleteTDHandler} disabled={todoList.entityStatus === 'loading'} className={todoList.entityStatus === 'loading' ? css.isDone :''}>
                     <DeleteForeverOutlined color={'secondary'} fontSize={'small'}/>
                 </IconButton>
                 <EditableSpan onChange={changeTitleForTodoList} title={todoList.title}/>
             </h3>
-            <UniversalFormInput className={css.error} callBack={addTask}/>
+            <UniversalFormInput className={css.error} callBack={addTask} disabled={todoList.entityStatus === 'loading'}/>
             <List disablePadding dense>
                 {
                     tasks.map(t => <Task key={t.id}
