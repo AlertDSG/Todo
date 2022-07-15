@@ -3,13 +3,14 @@ import React, {ChangeEvent, KeyboardEvent, useState} from 'react';
 
 type EditableSpanType = {
     title: string
+    entityStatus?: boolean
     onChange: (newTitle: string) => void
 }
 
 export const EditableSpan = React.memo((props: EditableSpanType) => {
     console.log('editspan called')
 
-    const [editMode, setEditMode] = useState<boolean>(false)
+    const [editMode, setEditMode] = useState<boolean>( false)
     const [value, setValue] = useState<string>(props.title)
 
     const onDoubleClickHandler = () => {
@@ -33,8 +34,9 @@ export const EditableSpan = React.memo((props: EditableSpanType) => {
     }
 
     return (
+
         <>
-            {editMode
+            {props.entityStatus &&  editMode
                 ? <input onKeyPress={onKeyPressHandler} onChange={onChangeHandler} onBlur={onBlurHandler} value={value} autoFocus/>
                 : <span onDoubleClick={onDoubleClickHandler}>{props.title}</span>}
         </>

@@ -1,6 +1,7 @@
 import {todoListsApi, TodoListsType} from "../api/todoList-api";
 import {AppThunk} from "../state/store";
 import {RequestStatusType, setAppErrorAC, setAppStatusAC} from "../app/app-reducer";
+import {handleServerAppError, handleServerNetworkError} from "../utils/error-utils";
 
 export type FilterValuesType = 'all' | 'active' | 'completed';
 export type TodolistDomainType = TodoListsType & {
@@ -39,6 +40,7 @@ export const todoListsReducer = (state: TodolistDomainType[] = initialState, act
     }
 
 }
+
 
 export const removeTodoListAC = (id: string) => ({type: 'REMOVE-TODOLIST', id}) as const
 export type RemoveTodoListAT = ReturnType<typeof removeTodoListAC>
@@ -87,16 +89,12 @@ export const addTodoListTC = (title: string): AppThunk => (dispatch) => {
                 dispatch(addTodoListAC(res.data.data.item))
                 dispatch(setAppStatusAC('succeeded'))
             } else {
-                if (res.data.messages.length) {
-                    dispatch(setAppErrorAC(res.data.messages[0]))
-                } else {
-                    dispatch(setAppErrorAC('Some error occurred'))
-                }
-                dispatch(setAppStatusAC('failed'))
+                handleServerAppError(res.data, dispatch)
             }
-
         })
-
+        .catch(err => {
+            handleServerNetworkError(err, dispatch)
+        })
 }
 
 
@@ -107,7 +105,12 @@ export const updateTodoListTC = (id: string, title: string): AppThunk => (dispat
             if (res.data.resultCode === 0) {
                 dispatch(changeTodoListAC(id, title))
                 dispatch(setAppStatusAC('succeeded'))
+            } else {
+                handleServerAppError(res.data, dispatch)
             }
+        })
+        .catch(err => {
+            handleServerNetworkError(err, dispatch)
         })
 }
 
@@ -119,6 +122,11 @@ export const deleteTodoListTC = (id: string): AppThunk => (dispatch) => {
             if (res.data.resultCode === 0) {
                 dispatch(removeTodoListAC(id))
                 dispatch(setAppStatusAC('succeeded'))
+            } else {
+                handleServerAppError(res.data, dispatch)
             }
+        })
+        .catch(err => {
+            handleServerNetworkError(err, dispatch)
         })
 }

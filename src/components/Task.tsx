@@ -1,18 +1,19 @@
 import React, {ChangeEvent, useCallback} from 'react';
 import { EditableSpan } from './EditableSpan';
 import css from "./TodoList.module.css"
-import {TaskStatuses, TaskType} from '../api/todoList-api'
-import {deleteTaskTC, updateTasksTC} from "../reducers/tasks-reducer";
-import {useAppDispatch} from "../app/hooks/hooks";
+import {TaskStatuses} from '../api/todoList-api'
+import {deleteTaskTC, TaskTypeState, updateTasksTC} from "../reducers/tasks-reducer";
+import {useAppDispatch, useAppSelector} from "../app/hooks/hooks";
 import {Checkbox, IconButton, ListItem} from "@mui/material";
 import {DeleteForeverOutlined} from "@mui/icons-material"
 
 type OnlyTaskType ={
-    task: TaskType
+    task: TaskTypeState
     todoListId: string
 }
 
 export const Task: React.FC<OnlyTaskType> = React.memo(({task, todoListId}) => {
+
 
     const dispatch = useAppDispatch()
 
@@ -42,7 +43,8 @@ export const Task: React.FC<OnlyTaskType> = React.memo(({task, todoListId}) => {
                 checked={task.status === TaskStatuses.Completed}
                 color={'primary'}/>
             <EditableSpan onChange={changeTitleForTask}
-                          title={task.title}/>
+                          title={task.title}
+                          entityStatus={task.entityStatus}/>
         </ListItem>
     )
 

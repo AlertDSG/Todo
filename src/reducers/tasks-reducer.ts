@@ -1,11 +1,13 @@
-import {AddTodoListsAT, RemoveTodoListAT, SetTodoListsAT} from "./todoLists-reducer";
+import {AddTodoListsAT, changeTodolistEntityStatusAC, RemoveTodoListAT, SetTodoListsAT} from "./todoLists-reducer";
 import {TaskPriorities, TaskStatuses, TaskType, todoListsApi, UpdateTaskModelType} from "../api/todoList-api";
-import {AppRootStateType, AppThunk} from "../state/store";
-import {setAppErrorAC, setAppStatusAC} from "../app/app-reducer";
+import {AppThunk} from "../state/store";
+import {setAppStatusAC} from "../app/app-reducer";
 import {handleServerAppError, handleServerNetworkError} from "../utils/error-utils";
 
+export type TaskTypeState = TaskType & { entityStatus: boolean }
+
 export type TasksStateType = {
-    [key: string]: Array<TaskType>
+    [key: string]: Array<TaskTypeState>
 }
 
 export type UpdateDomainTaskModelType = {
@@ -24,6 +26,7 @@ export type TaskActionType = | RemoveTaskAT
     | SetTodoListsAT
     | RemoveTodoListAT
     | AddTodoListsAT
+    | SetTasksEntityStatusAT
 
 const initialState: TasksStateType = {}
 
@@ -45,7 +48,7 @@ export const tasksReducer = (state: TasksStateType = initialState, action: TaskA
         case 'ADD-TASK':
             return {
                 ...state,
-                [action.task.todoListId]: [action.task, ...state[action.task.todoListId]]
+                [action.task.todoListId]: [{...action.task, entityStatus: true}, ...state[action.task.todoListId]]
             }
         case 'UPDATE-TASK':
             return {
@@ -56,7 +59,14 @@ export const tasksReducer = (state: TasksStateType = initialState, action: TaskA
                 } : s)
             }
         case 'SET-TASKS':
-            return {...state, [action.todolistId]: action.tasks}
+            return {...state, [action.todolistId]: action.tasks.map(t => ({...t, entityStatus: true}))}
+        case 'SET-TASK-ENTITY-STATUS':
+            return {...state,
+                [action.todolistId]: state[action.todolistId].map(t => t.id === action.taskId ? {
+                    ...t,
+                    entityStatus: action.entityStatus
+                } : t)
+            }
         case 'ADD-TODOLIST':
             return {
                 ...state,
@@ -87,9 +97,16 @@ export type UpdateTaskAT = ReturnType<typeof updateTaskAC>
 export const setTasksAC = (tasks: Array<TaskType>, todolistId: string) => ({
     type: 'SET-TASKS',
     tasks,
-    todolistId
+    todolistId,
 }) as const
 export type SetTasksAT = ReturnType<typeof setTasksAC>
+export const setTasksEntityStatusAC = (todolistId: string, taskId: string, entityStatus: boolean) => ({
+    type: 'SET-TASK-ENTITY-STATUS',
+    todolistId,
+    taskId,
+    entityStatus
+}) as const
+export type SetTasksEntityStatusAT = ReturnType<typeof setTasksEntityStatusAC>
 
 export const setTasksTC = (id: string): AppThunk => (dispatch) => {
     dispatch(setAppStatusAC('loading'))
@@ -119,6 +136,7 @@ export const createTasksTC = (id: string, title: string): AppThunk => (dispatch)
 export const updateTasksTC = (taskId: string, domainModel: UpdateDomainTaskModelType, todoListId: string): AppThunk => (dispatch, getState) => {
 
     dispatch(setAppStatusAC('loading'))
+    dispatch(setTasksEntityStatusAC(todoListId, taskId, false))
 
     const state = getState()
     const task = state.tasks[todoListId].find(t => t.id === taskId)
@@ -144,6 +162,7 @@ export const updateTasksTC = (taskId: string, domainModel: UpdateDomainTaskModel
         .catch(err => {
             handleServerNetworkError(err, dispatch)
         })
+        .finally(() => dispatch(setTasksEntityStatusAC(todoListId, taskId, true)))
 }
 
 export const deleteTaskTC = (todoListId: string, taskId: string): AppThunk => (dispatch) => {
@@ -153,7 +172,11 @@ export const deleteTaskTC = (todoListId: string, taskId: string): AppThunk => (d
             if (res.data.resultCode === 0) {
                 dispatch(removeTaskAC(todoListId, taskId))
                 dispatch(setAppStatusAC('succeeded'))
+            } else {
+                handleServerAppError(res.data, dispatch)
             }
-
+        })
+        .catch(err => {
+            handleServerNetworkError(err, dispatch)
         })
 }

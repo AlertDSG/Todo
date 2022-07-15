@@ -21,7 +21,7 @@ type TodoListPropsType = {
 }
 
 export const TodoListWithRedux: React.FC<TodoListPropsType> = React.memo(({todoList}) => {
-
+    console.log(todoList)
     useEffect(() => {
         dispatch(setTasksTC(todoList.id))
     },[])
@@ -39,15 +39,15 @@ export const TodoListWithRedux: React.FC<TodoListPropsType> = React.memo(({todoL
 
     const onClickDeleteTDHandler = useCallback(() => {
         dispatch(deleteTodoListTC(todoList.id))
-    },[todoList.id, dispatch])
+    },[todoList.id])
 
     const changeTitleForTodoList = useCallback((title: string) => {
          dispatch(updateTodoListTC(todoList.id, title))
-    }, [todoList.id, dispatch])
+    }, [todoList.id])
 
     const addTask = useCallback((value: string) => {
          dispatch(createTasksTC(todoList.id,value))
-    }, [todoList.id, dispatch])
+    }, [todoList.id])
 
     const buttonAll = todoList.filter === 'all' ? "secondary" : 'primary'
     const buttonActive = todoList.filter === 'active' ? "secondary" : 'primary'
