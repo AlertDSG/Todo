@@ -8,7 +8,6 @@ import {
     TaskStatuses,
     TaskType,
     todoListsApi,
-    TodoListsType,
     UpdateTaskModelType
 } from "../api/todoList-api";
 import {AppThunk} from "../state/store";
@@ -45,31 +44,30 @@ const slice = createSlice({
             const index = state[action.payload.todoListID].findIndex(t => t.id === action.payload.id)
             state[action.payload.todoListID].splice(index, 1)
         },
-        addTaskAC: (state, action: PayloadAction<{ todoListId: string, task: TaskType }>) => {
-            state[action.payload.todoListId] = [{
-                ...action.payload.task,
-                entityStatus: 'succeeded'
-            }, ...state[action.payload.todoListId]]
+        addTaskAC: (state, action: PayloadAction<{task: TaskType }>) => {
+            state[action.payload.task.todoListId].unshift({...action.payload.task, entityStatus: 'succeeded'})
         },
         updateTaskAC: (state, action: PayloadAction<{ taskId: string, model: UpdateDomainTaskModelType, todolistId: string }>) => {
-            state[action.payload.todolistId] = state[action.payload.todolistId].map(t => t.id === action.payload.taskId ? {...t, ...action.payload.model} : t)
-
+            const index = state[action.payload.todolistId].findIndex(t => t.id === action.payload.taskId)
+            state[action.payload.todolistId][index] = {...state[action.payload.todolistId][index], ...action.payload.model}
         },
 
         setTasksEntityStatusAC: (state, action: PayloadAction<{ todolistId: string, taskId: string, entityStatus: RequestStatusType }>) => {
-            state[action.payload.todolistId].map(t => t.id === action.payload.taskId ? t.entityStatus = action.payload.entityStatus : t)
+            const index = state[action.payload.todolistId].findIndex(t => t.id === action.payload.taskId)
+            state[action.payload.todolistId][index].entityStatus = action.payload.entityStatus
         },
 
-    }, extraReducers: {
-        [setTodoListsAC.type]: (state, action: PayloadAction<{ todoLists: TodoListsType[] }>) => {
+    }, extraReducers: (builder) => {
+        builder.addCase(setTodoListsAC, (state, action) => {
             action.payload.todoLists.forEach(t => state[t.id] = [])
-        },
-        [addTodoListAC.type]: (state, action: PayloadAction<{ todoList: TodoListsType }>) => {
+        })
+        builder.addCase(addTodoListAC, (state, action) => {
             state[action.payload.todoList.id] = []
-        },
-        [removeTodoListAC.type]: (state, action: PayloadAction<{ id: string }>) => {
+        })
+        builder.addCase(removeTodoListAC, (state, action) => {
             delete state[action.payload.id]
-        }
+        })
+
     }
 })
 
@@ -90,7 +88,7 @@ export const createTasksTC = (id: string, title: string): AppThunk => (dispatch)
     todoListsApi.createTask(id, title)
         .then(res => {
             if (res.data.resultCode === 0) {
-                dispatch(addTaskAC({task: res.data.data.item, todoListId: id}))
+                dispatch(addTaskAC({task: res.data.data.item}))
                 dispatch(setAppStatusAC({status: 'succeeded'}))
             } else {
                 handleServerAppError(res.data, dispatch)
