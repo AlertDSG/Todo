@@ -1,9 +1,10 @@
 import React, {ChangeEvent, KeyboardEvent, useState} from 'react';
+import {RequestStatusType} from "../app/app-reducer";
 
 
 type EditableSpanType = {
     title: string
-    entityStatus?: boolean
+    entityStatus?: RequestStatusType
     onChange: (newTitle: string) => void
 }
 
@@ -36,7 +37,7 @@ export const EditableSpan = React.memo((props: EditableSpanType) => {
     return (
 
         <>
-            {props.entityStatus &&  editMode
+            {props.entityStatus === 'succeeded' &&  editMode
                 ? <input onKeyPress={onKeyPressHandler} onChange={onChangeHandler} onBlur={onBlurHandler} value={value} autoFocus/>
                 : <span onDoubleClick={onDoubleClickHandler}>{props.title}</span>}
         </>

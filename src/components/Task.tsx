@@ -44,7 +44,7 @@ export const Task: React.FC<OnlyTaskType> = React.memo(({task, todoListId}) => {
                 color={'primary'}/>
             <EditableSpan onChange={changeTitleForTask}
                           title={task.title}
-                          entityStatus={task.entityStatus}/>
+                          entityStatus={'succeeded'}/>
         </ListItem>
     )
 

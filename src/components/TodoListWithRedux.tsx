@@ -24,7 +24,7 @@ export const TodoListWithRedux: React.FC<TodoListPropsType> = React.memo(({todoL
     console.log(todoList)
     useEffect(() => {
         dispatch(setTasksTC(todoList.id))
-    },[])
+    }, [])
 
     let tasks = useAppSelector(state => state.tasks[todoList.id])
 
@@ -39,14 +39,14 @@ export const TodoListWithRedux: React.FC<TodoListPropsType> = React.memo(({todoL
 
     const onClickDeleteTDHandler = useCallback(() => {
         dispatch(deleteTodoListTC(todoList.id))
-    },[todoList.id])
+    }, [todoList.id])
 
     const changeTitleForTodoList = useCallback((title: string) => {
-         dispatch(updateTodoListTC(todoList.id, title))
+        dispatch(updateTodoListTC(todoList.id, title))
     }, [todoList.id])
 
     const addTask = useCallback((value: string) => {
-         dispatch(createTasksTC(todoList.id,value))
+        dispatch(createTasksTC(todoList.id, value))
     }, [todoList.id])
 
     const buttonAll = todoList.filter === 'all' ? "secondary" : 'primary'
@@ -57,12 +57,14 @@ export const TodoListWithRedux: React.FC<TodoListPropsType> = React.memo(({todoL
     return (
         <div>
             <h3>
-                <IconButton onClick={onClickDeleteTDHandler} disabled={todoList.entityStatus === 'loading'} className={todoList.entityStatus === 'loading' ? css.isDone :''}>
+                <IconButton onClick={onClickDeleteTDHandler} disabled={todoList.entityStatus === 'loading'}
+                            className={todoList.entityStatus === 'loading' ? css.isDone : ''}>
                     <DeleteForeverOutlined color={'secondary'} fontSize={'small'}/>
                 </IconButton>
-                <EditableSpan onChange={changeTitleForTodoList} title={todoList.title}/>
+                <EditableSpan onChange={changeTitleForTodoList} title={todoList.title} entityStatus={todoList.entityStatus}/>
             </h3>
-            <UniversalFormInput className={css.error} callBack={addTask} disabled={todoList.entityStatus === 'loading'}/>
+            <UniversalFormInput className={css.error} callBack={addTask}
+                                disabled={todoList.entityStatus === 'loading'}/>
             <List disablePadding dense>
                 {
                     tasks.map(t => <Task key={t.id}
@@ -76,19 +78,19 @@ export const TodoListWithRedux: React.FC<TodoListPropsType> = React.memo(({todoL
                 <Button color={buttonAll}
                         size={'small'}
                         onClick={() => {
-                            dispatch(changeFilterTodoListAC(todoList.id, 'all'))
+                            dispatch(changeFilterTodoListAC({id: todoList.id, filter: 'all'}))
                         }}>
                     All
                 </Button>
                 <Button color={buttonActive}
                         size={'small'}
                         onClick={() => {
-                            dispatch(changeFilterTodoListAC(todoList.id, 'active'))
+                            dispatch(changeFilterTodoListAC({id: todoList.id, filter: 'active'}))
                         }}>Active</Button>
                 <Button color={buttonCompleted}
                         size={'small'}
                         onClick={() => {
-                            dispatch(changeFilterTodoListAC(todoList.id, 'completed'))
+                            dispatch(changeFilterTodoListAC({id: todoList.id, filter: 'completed'}))
                         }}>Completed</Button>
             </div>
         </div>
