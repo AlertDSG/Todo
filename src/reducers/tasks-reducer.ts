@@ -44,8 +44,8 @@ const slice = createSlice({
             const index = state[action.payload.todoListID].findIndex(t => t.id === action.payload.id)
             state[action.payload.todoListID].splice(index, 1)
         },
-        addTaskAC: (state, action: PayloadAction<{task: TaskType }>) => {
-            state[action.payload.task.todoListId].unshift({...action.payload.task, entityStatus: 'succeeded'})
+        addTaskAC: (state, action: PayloadAction<TaskType>) => {
+            state[action.payload.todoListId].unshift({...action.payload, entityStatus: 'succeeded'})
         },
         updateTaskAC: (state, action: PayloadAction<{ taskId: string, model: UpdateDomainTaskModelType, todolistId: string }>) => {
             const index = state[action.payload.todolistId].findIndex(t => t.id === action.payload.taskId)
@@ -88,7 +88,7 @@ export const createTasksTC = (id: string, title: string): AppThunk => (dispatch)
     todoListsApi.createTask(id, title)
         .then(res => {
             if (res.data.resultCode === 0) {
-                dispatch(addTaskAC({task: res.data.data.item}))
+                dispatch(addTaskAC(res.data.data.item))
                 dispatch(setAppStatusAC({status: 'succeeded'}))
             } else {
                 handleServerAppError(res.data, dispatch)
