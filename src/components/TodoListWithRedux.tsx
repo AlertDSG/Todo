@@ -10,7 +10,7 @@ import {
     updateTodoListTC
 } from "../reducers/todoLists-reducer";
 import {Task} from "./Task";
-import {useAppSelector, useAppDispatch} from "../app/hooks/hooks";
+import {useAppDispatch, useAppSelector} from "../app/hooks/hooks";
 import {createTasks, fetchTasks} from "../reducers/tasks-reducer";
 import {Button, IconButton, List} from "@mui/material";
 import {DeleteForeverOutlined} from "@mui/icons-material";
@@ -37,11 +37,11 @@ export const TodoListWithRedux: React.FC<TodoListPropsType> = React.memo(({todoL
     }
 
     const onClickDeleteTDHandler = useCallback(() => {
-        dispatch(deleteTodoListTC(todoList.id))
+        dispatch(deleteTodoListTC({id: todoList.id}))
     }, [todoList.id])
 
     const changeTitleForTodoList = useCallback((title: string) => {
-        dispatch(updateTodoListTC(todoList.id, title))
+        dispatch(updateTodoListTC({id: todoList.id, title}))
     }, [todoList.id])
 
     const addTask = useCallback((title: string) => {
@@ -61,7 +61,8 @@ export const TodoListWithRedux: React.FC<TodoListPropsType> = React.memo(({todoL
                             className={todoList.entityStatus === 'loading' ? css.isDone : ''}>
                     <DeleteForeverOutlined color={'secondary'} fontSize={'small'}/>
                 </IconButton>
-                <EditableSpan onChange={changeTitleForTodoList} title={todoList.title} entityStatus={todoList.entityStatus}/>
+                <EditableSpan onChange={changeTitleForTodoList} title={todoList.title}
+                              entityStatus={todoList.entityStatus}/>
             </h3>
             <UniversalFormInput className={css.error} callBack={addTask}
                                 disabled={todoList.entityStatus === 'loading'}/>

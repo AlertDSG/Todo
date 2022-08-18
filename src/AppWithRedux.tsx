@@ -1,22 +1,11 @@
-
 import React, {useCallback, useEffect} from 'react';
 import './App.css';
 
 import {UniversalFormInput} from './components/UniversalFormInput';
 import {addTodoListTC, setTodoListsTC} from './reducers/todoLists-reducer';
-import { TodoListWithRedux } from './components/TodoListWithRedux';
+import {TodoListWithRedux} from './components/TodoListWithRedux';
 import {useAppDispatch, useAppSelector} from "./app/hooks/hooks";
-import {
-    AppBar,
-    Button,
-    Container,
-    Grid,
-    IconButton,
-    LinearProgress, Menu,
-    Paper,
-    Toolbar,
-    Typography
-} from "@mui/material";
+import {AppBar, Button, Container, Grid, IconButton, LinearProgress, Paper, Toolbar, Typography} from "@mui/material";
 import {MenuTwoTone} from "@mui/icons-material";
 import {ErrorSnackbar} from "./components/ErrorSnackbar/ErrorSnackbar";
 
@@ -31,8 +20,8 @@ function AppWithRedux() {
         dispatch(setTodoListsTC())
     },[dispatch])
 
-    const addNewTodoList = useCallback((newTodoList: string) => {
-        dispatch(addTodoListTC(newTodoList))
+    const addNewTodoList = useCallback((title: string) => {
+        dispatch(addTodoListTC({title}))
     }, [dispatch])
 
     const todolistItems = todoLists.map(t => {

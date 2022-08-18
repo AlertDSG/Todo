@@ -22,7 +22,6 @@ export const Task: React.FC<OnlyTaskType> = React.memo(({task, todoListId}) => {
     },[dispatch, todoListId, task.id])
 
     const onChangeInputCheckedHandler = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-        console.log(e.currentTarget.checked)
          dispatch(updateTask({taskId: task.id,domainModel:{status: e.currentTarget.checked ? TaskStatuses.Completed : TaskStatuses.New}, todoListId}))
 
     },[dispatch, task.id, todoListId])
