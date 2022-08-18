@@ -1,6 +1,6 @@
-import {addTaskAC, removeTaskAC, tasksReducer, TasksStateType, updateTaskAC} from './tasks-reducer';
+import {createTasks, removeTask, tasksReducer, TasksStateType, updateTask} from './tasks-reducer';
 import {addTodoListAC} from './todoLists-reducer'
-import {TaskPriorities, TaskStatuses} from "../api/todoList-api";
+import {TaskStatuses, TaskType} from "../api/todoList-api";
 
 
 let startState: TasksStateType
@@ -75,7 +75,7 @@ beforeEach(() => {
 
 test('correct task should be deleted from correct array', () => {
 
-    const action = removeTaskAC({id: '2', todoListID: 'todolistId2'});
+    const action = removeTask.fulfilled({todoListID: 'todolistId2',id: '2'}, '', {todoListId: 'todolistId2', taskId: '2'});
 
     const endState = tasksReducer(startState, action)
 
@@ -85,7 +85,7 @@ test('correct task should be deleted from correct array', () => {
 
 test('correct task should be added to correct array', () => {
 
-    const task = {
+    const task: TaskType = {
         id: "1",
         title: "juce",
         todoListId: 'todolistId2',
@@ -98,7 +98,7 @@ test('correct task should be added to correct array', () => {
         priority: 0
     }
 
-    const action = addTaskAC(task);
+    const action = createTasks.fulfilled({task},'',{id: '1', title: "juce"});
 
     const endState = tasksReducer(startState, action)
 
@@ -108,8 +108,20 @@ test('correct task should be added to correct array', () => {
 })
 
 test('status of specified task should be changed', () => {
+    const task: TaskType = {
+        id: "1",
+        title: "juce",
+        todoListId: 'todolistId2',
+        status: TaskStatuses.New,
+        addedDate: '',
+        deadline: '',
+        description: '',
+        order: 0,
+        startDate: '',
+        priority: 0
+    }
 
-    const action = updateTaskAC({taskId: '2', todolistId: "todolistId2", model: {status: TaskStatuses.New}});
+    const action = updateTask.fulfilled({taskId: '2', todolistId: "todolistId2", model: {...task,status: TaskStatuses.New}}, '', {taskId: '2', domainModel: {}, todoListId: "todolistId2" } );
 
     const endState = tasksReducer(startState, action)
 
@@ -117,8 +129,20 @@ test('status of specified task should be changed', () => {
 });
 
 test('title of specified task should be changed', () => {
+    const task: TaskType = {
+        id: "1",
+        title: "juce",
+        todoListId: 'todolistId2',
+        status: TaskStatuses.New,
+        addedDate: '',
+        deadline: '',
+        description: '',
+        order: 0,
+        startDate: '',
+        priority: 0
+    }
 
-    const action = updateTaskAC({taskId: '2', todolistId:"todolistId2", model: {title:'Blabla'}});
+    const action = updateTask.fulfilled({taskId:'2', model :{...task,title:'Blabla'}, todolistId: 'todolistId2'},'',{taskId: '2', domainModel: {}, todoListId: 'todolistId2'});
 
     const endState = tasksReducer(startState, action)
 

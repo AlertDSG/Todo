@@ -11,7 +11,7 @@ import {
 } from "../reducers/todoLists-reducer";
 import {Task} from "./Task";
 import {useAppSelector, useAppDispatch} from "../app/hooks/hooks";
-import {createTasksTC, setTasksTC} from "../reducers/tasks-reducer";
+import {createTasks, fetchTasks} from "../reducers/tasks-reducer";
 import {Button, IconButton, List} from "@mui/material";
 import {DeleteForeverOutlined} from "@mui/icons-material";
 
@@ -21,9 +21,8 @@ type TodoListPropsType = {
 }
 
 export const TodoListWithRedux: React.FC<TodoListPropsType> = React.memo(({todoList}) => {
-    console.log(todoList)
     useEffect(() => {
-        dispatch(setTasksTC(todoList.id))
+        dispatch(fetchTasks(todoList.id))
     }, [])
 
     let tasks = useAppSelector(state => state.tasks[todoList.id])
@@ -45,8 +44,9 @@ export const TodoListWithRedux: React.FC<TodoListPropsType> = React.memo(({todoL
         dispatch(updateTodoListTC(todoList.id, title))
     }, [todoList.id])
 
-    const addTask = useCallback((value: string) => {
-        dispatch(createTasksTC(todoList.id, value))
+    const addTask = useCallback((title: string) => {
+        const id = todoList.id
+        dispatch(createTasks({id, title}))
     }, [todoList.id])
 
     const buttonAll = todoList.filter === 'all' ? "secondary" : 'primary'

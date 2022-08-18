@@ -18,10 +18,11 @@ export const store = configureStore({
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().prepend(thunkMiddleware)
 })
 // определить автоматически тип всего объекта состояния
-export type AppRootStateType = ReturnType<typeof rootReducer>
+export type AppRootStateType = ReturnType<typeof store.getState>
 
 
 export type AppDispatch = ThunkDispatch<AppRootStateType, unknown, AnyAction>
+// export type AppDispatch = typeof store.dispatch
 
 
 // export type AppActionType = TodoListActionType | TaskActionType | typeof setAppStatusAC| typeof setAppErrorAC
