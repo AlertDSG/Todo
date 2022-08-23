@@ -1,16 +1,17 @@
 import React, {ChangeEvent, useCallback} from 'react';
-import {EditableSpan} from './EditableSpan';
-import css from "./TodoList.module.css"
-import {TaskStatuses} from '../features/todolists/todoList-api'
-import {removeTask, TaskTypeState, updateTask} from "../features/tasks/tasks-reducer";
-import {useAppDispatch} from "../common/hooks/hooks";
+import {EditableSpan} from '../../components/EditableSpan';
+import css from "../../components/TodoList.module.css"
+import {TaskStatuses} from '../todolists/todoList-api'
+import {useAppDispatch} from "../../common/hooks/hooks";
 import {Checkbox, IconButton, ListItem} from "@mui/material";
 import {DeleteForeverOutlined} from "@mui/icons-material"
+import {TaskTypeState, taskActions} from "./index";
 
 type OnlyTaskType ={
     task: TaskTypeState
     todoListId: string
 }
+const {removeTask, updateTask} = taskActions
 
 export const Task: React.FC<OnlyTaskType> = React.memo(({task, todoListId}) => {
 

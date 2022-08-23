@@ -3,6 +3,8 @@ import {handleServerAppError, handleServerNetworkError} from "../../common/utils
 import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {appActions, RequestStatusType} from "../../app";
 
+const {setAppStatusAC} = appActions
+
 export type FilterValuesType = 'all' | 'active' | 'completed';
 export type TodolistDomainType = TodoListsType & {
     filter: FilterValuesType
@@ -11,21 +13,21 @@ export type TodolistDomainType = TodoListsType & {
 
 const initialState: TodolistDomainType[] = []
 
-export const setTodoListsTC = createAsyncThunk('todolist/setTodoLists', async (param, {dispatch}) => {
-    dispatch(appActions.setAppStatusAC({status: 'loading'}))
+const setTodoListsTC = createAsyncThunk('todolist/setTodoLists', async (param, {dispatch}) => {
+    dispatch(setAppStatusAC({status: 'loading'}))
     const res = await todoListsApi.getTodoLists()
-    dispatch(appActions.setAppStatusAC({status: 'succeeded'}))
+    dispatch(setAppStatusAC({status: 'succeeded'}))
     return {todoLists: res.data}
 })
-export const addTodoListTC = createAsyncThunk('todolist/addTodoList', async (param: { title: string }, {
+const addTodoListTC = createAsyncThunk('todolist/addTodoList', async (param: { title: string }, {
     dispatch,
     rejectWithValue
 }) => {
     try {
-        dispatch(appActions.setAppStatusAC({status: 'loading'}))
+        dispatch(setAppStatusAC({status: 'loading'}))
         const res = await todoListsApi.createTodoLists(param.title)
         if (res.data.resultCode === 0) {
-            dispatch(appActions.setAppStatusAC({status: 'succeeded'}))
+            dispatch(setAppStatusAC({status: 'succeeded'}))
             return {todoList: res.data.data.item}
         } else {
             handleServerAppError(res.data, dispatch)
@@ -36,15 +38,15 @@ export const addTodoListTC = createAsyncThunk('todolist/addTodoList', async (par
         return rejectWithValue({})
     }
 })
-export const updateTodoListTC = createAsyncThunk('todolist/updateTodoList', async (param: { id: string, title: string }, {
+const updateTodoListTC = createAsyncThunk('todolist/updateTodoList', async (param: { id: string, title: string }, {
     dispatch,
     rejectWithValue
 }) => {
     try {
-        dispatch(appActions.setAppStatusAC({status: 'loading'}))
+        dispatch(setAppStatusAC({status: 'loading'}))
         const res = await todoListsApi.updateTodolist(param.id, param.title)
         if (res.data.resultCode === 0) {
-            dispatch(appActions.setAppStatusAC({status: 'succeeded'}))
+            dispatch(setAppStatusAC({status: 'succeeded'}))
             return {id: param.id, title: param.title}
         } else {
             handleServerAppError(res.data, dispatch)
@@ -55,17 +57,17 @@ export const updateTodoListTC = createAsyncThunk('todolist/updateTodoList', asyn
         return rejectWithValue({})
     }
 })
-export const deleteTodoListTC = createAsyncThunk('todolist/deleteTodoList', async (param: { id: string }, {
+const deleteTodoListTC = createAsyncThunk('todolist/deleteTodoList', async (param: { id: string }, {
     dispatch,
     rejectWithValue
 }) => {
     try {
-        dispatch(appActions.setAppStatusAC({status: 'loading'}))
+        dispatch(setAppStatusAC({status: 'loading'}))
         dispatch(changeTodolistEntityStatusAC({status: 'loading', id: param.id}))
         const res = await todoListsApi.deleteTodolist(param.id)
         console.log(res)
         if (res.data.resultCode === 0) {
-            dispatch(appActions.setAppStatusAC({status: 'succeeded'}))
+            dispatch(setAppStatusAC({status: 'succeeded'}))
             return {id: param.id}
         } else {
             handleServerAppError(res.data, dispatch)
@@ -78,8 +80,14 @@ export const deleteTodoListTC = createAsyncThunk('todolist/deleteTodoList', asyn
     }
 })
 
+export const asyncActions = {
+    setTodoListsTC,
+    addTodoListTC,
+    updateTodoListTC,
+    deleteTodoListTC
+}
 
-const slice = createSlice({
+export const slice = createSlice({
     name: 'todoLists',
     initialState: initialState,
     reducers: {
@@ -110,8 +118,6 @@ const slice = createSlice({
     }
 
 })
-export const todoListsReducer = slice.reducer
 
-export const {
-    changeFilterTodoListAC, changeTodolistEntityStatusAC
+export const { changeTodolistEntityStatusAC
 } = slice.actions

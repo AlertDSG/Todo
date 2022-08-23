@@ -1,11 +1,9 @@
-import {addTodoListTC, deleteTodoListTC, setTodoListsTC} from "../todolists/todoLists-reducer";
 import {TaskPriorities, TaskStatuses, TaskType, todoListsApi, UpdateTaskModelType} from "../todolists/todoList-api";
 import {AppRootStateType} from "../../app/store";
 import {handleServerAppError, handleServerNetworkError} from "../../common/utils/error-utils";
 import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {appActions, RequestStatusType} from "../../app";
-
-const {setAppStatusAC} = appActions
+import {todoListsActions} from '../todolists'
 
 export type TaskTypeState = TaskType & { entityStatus: RequestStatusType }
 
@@ -13,6 +11,7 @@ export type TasksStateType = {
     [key: string]: Array<TaskTypeState>
 }
 const initialState: TasksStateType = {}
+
 
 
 export type UpdateDomainTaskModelType = {
@@ -105,7 +104,14 @@ export const removeTask = createAsyncThunk('tasks/removeTask', async (param: { t
     }
 })
 
-const slice = createSlice({
+export const asyncActions = {
+    fetchTasks,
+    createTasks,
+    updateTask,
+    removeTask
+}
+
+export const slice = createSlice({
     name: 'tasks',
     initialState: initialState,
     reducers: {
@@ -142,5 +148,7 @@ const slice = createSlice({
     }
 })
 
-export const tasksReducer = slice.reducer
+// export const tasksReducer = slice.reducer
+const {setTodoListsTC, addTodoListTC, deleteTodoListTC} = todoListsActions
+const {setAppStatusAC} = appActions
 export const {setTasksEntityStatusAC} = slice.actions

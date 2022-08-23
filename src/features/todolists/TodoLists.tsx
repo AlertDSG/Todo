@@ -1,14 +1,18 @@
 import React, {useCallback, useEffect, useMemo} from 'react';
 import {useAppDispatch, useAppSelector} from "../../common/hooks/hooks";
-import {addTodoListTC, setTodoListsTC} from "./todoLists-reducer";
 import {Grid, Paper} from "@mui/material";
-import {TodoListWithRedux} from "../../components/TodoListWithRedux";
+import {TodoList} from "../../components/TodoList";
 import {UniversalFormInput} from "../../components/UniversalFormInput";
 import {useNavigate} from "react-router-dom";
+import {todoListsActions, todoListsSelectors} from "./index";
+import {authSelectors} from "../auth";
 
-export const TodoLists = () => {
-    const todoLists = useAppSelector(state => state.todoLists)
-    const isLoggedIn = useAppSelector(state => state.auth.isLoggedIn)
+const {setTodoListsTC, addTodoListTC} = todoListsActions
+
+export const TodoLists = React.memo(() => {
+
+    const todoLists = useAppSelector(todoListsSelectors.selectTodoLists)
+    const isLoggedIn = useAppSelector(authSelectors.selectIsLoggedIn)
     const dispatch = useAppDispatch()
 
     useEffect(() => {
@@ -24,11 +28,10 @@ export const TodoLists = () => {
     }, [dispatch])
 
     const todolistItems = useMemo(() => todoLists.map(t => {
-
         return (
             <Grid item key={t.id}>
                 <Paper style={{margin: "20px", padding: "10px"}} elevation={3}>
-                    <TodoListWithRedux
+                    <TodoList
                         todoList={t}
                     />
                 </Paper>
@@ -50,4 +53,4 @@ export const TodoLists = () => {
             </Grid>
         </>
     );
-};
+})

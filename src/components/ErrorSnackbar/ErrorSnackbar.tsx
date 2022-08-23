@@ -9,6 +9,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
     props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
+const {setAppErrorAC} = appActions
 
 export function ErrorSnackbar() {
 
@@ -19,7 +20,7 @@ export function ErrorSnackbar() {
         if (reason === 'clickaway') {
             return;
         }
-        dispatch(appActions.setAppErrorAC({error: null}))
+        dispatch(setAppErrorAC({error: null}))
     };
 
     return (

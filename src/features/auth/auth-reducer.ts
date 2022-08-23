@@ -5,8 +5,7 @@ import {appActions} from "../../app";
 const {setAppStatusAC, initializeApp} = appActions
 
 const createLogin = createAsyncThunk('auth/login', async (param: UserPropertiesType, {
-    dispatch,
-    rejectWithValue
+    dispatch
 }) => {
     dispatch(setAppStatusAC({status: 'loading'}))
     const res = await authAPI.login(param)
@@ -15,10 +14,7 @@ const createLogin = createAsyncThunk('auth/login', async (param: UserPropertiesT
         return {isLoggedIn: true, data: res.data.data}
     }
 })
-const removeLogin = createAsyncThunk('auth/logOut', async (param, {
-    dispatch,
-    rejectWithValue
-}) => {
+const removeLogin = createAsyncThunk('auth/logOut', async () => {
     const res = await authAPI.logOut()
     console.log(res)
     if (res.data.resultCode === 0) {

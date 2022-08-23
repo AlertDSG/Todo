@@ -1,11 +1,9 @@
 import {v1} from 'uuid';
-import {
-    addTodoListTC, changeFilterTodoListAC,
-    deleteTodoListTC, FilterValuesType,
-    TodolistDomainType,
-    todoListsReducer,
-    updateTodoListTC
-} from "./todoLists-reducer";
+import {TodolistDomainType, todoListsActions, todoListsReducer} from "./index";
+import {FilterValuesType} from "./todoLists-reducer";
+
+const {deleteTodoListTC, addTodoListTC, updateTodoListTC, changeFilterTodoListAC} = todoListsActions
+
 
 let todolistId1: string;
 let todolistId2: string;

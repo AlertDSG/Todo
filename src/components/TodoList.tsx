@@ -1,40 +1,33 @@
 import React, {useCallback, useEffect} from "react";
 import css from "./TodoList.module.css"
 import {UniversalFormInput} from "./UniversalFormInput";
-
 import {EditableSpan} from "./EditableSpan";
-import {
-    changeFilterTodoListAC,
-    deleteTodoListTC,
-    TodolistDomainType,
-    updateTodoListTC
-} from "../features/todolists/todoLists-reducer";
-import {Task} from "./Task";
 import {useAppDispatch, useAppSelector} from "../common/hooks/hooks";
 import {createTasks, fetchTasks} from "../features/tasks/tasks-reducer";
 import {Button, IconButton, List} from "@mui/material";
 import {DeleteForeverOutlined} from "@mui/icons-material";
+import {TodolistDomainType , todoListsActions} from "../features/todolists";
+import {Task} from "../features/tasks/Task";
 
 
 type TodoListPropsType = {
     todoList: TodolistDomainType
 }
 
-export const TodoListWithRedux: React.FC<TodoListPropsType> = React.memo(({todoList}) => {
+const {deleteTodoListTC, updateTodoListTC, changeFilterTodoListAC} = todoListsActions
+
+export const TodoList: React.FC<TodoListPropsType> = React.memo(({todoList}) => {
     useEffect(() => {
         dispatch(fetchTasks(todoList.id))
     }, [])
 
-    let tasks = useAppSelector(state => state.tasks[todoList.id])
+    let tasks = useAppSelector(state => state.tasks[todoList.id].filter(t => {
+        if (todoList.filter === 'completed') return t.status
+        if (todoList.filter === 'active') return !t.status
+        else return t
+    }))
 
     const dispatch = useAppDispatch()
-
-    if (todoList.filter === 'completed') {
-        tasks = tasks.filter(t => t.status)
-    }
-    if (todoList.filter === 'active') {
-        tasks = tasks.filter(t => !t.status)
-    }
 
     const onClickDeleteTDHandler = useCallback(() => {
         dispatch(deleteTodoListTC({id: todoList.id}))
