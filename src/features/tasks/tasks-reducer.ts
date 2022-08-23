@@ -1,9 +1,11 @@
-import {addTodoListTC, deleteTodoListTC, setTodoListsTC} from "./todoLists-reducer";
-import {TaskPriorities, TaskStatuses, TaskType, todoListsApi, UpdateTaskModelType} from "../api/todoList-api";
-import {AppRootStateType} from "../state/store";
-import {RequestStatusType, setAppStatusAC} from "../app/app-reducer";
-import {handleServerAppError, handleServerNetworkError} from "../utils/error-utils";
+import {addTodoListTC, deleteTodoListTC, setTodoListsTC} from "../todolists/todoLists-reducer";
+import {TaskPriorities, TaskStatuses, TaskType, todoListsApi, UpdateTaskModelType} from "../todolists/todoList-api";
+import {AppRootStateType} from "../../app/store";
+import {handleServerAppError, handleServerNetworkError} from "../../common/utils/error-utils";
 import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {appActions, RequestStatusType} from "../../app";
+
+const {setAppStatusAC} = appActions
 
 export type TaskTypeState = TaskType & { entityStatus: RequestStatusType }
 

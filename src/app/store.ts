@@ -1,9 +1,10 @@
 import {AnyAction,combineReducers} from 'redux';
-import {tasksReducer} from '../reducers/tasks-reducer';
-import {todoListsReducer} from '../reducers/todoLists-reducer';
+import {tasksReducer} from '../features/tasks/tasks-reducer';
+import {todoListsReducer} from '../features/todolists/todoLists-reducer';
 import thunkMiddleware, {ThunkAction, ThunkDispatch} from "redux-thunk";
-import {appReducer} from "../app/app-reducer";
 import {configureStore} from "@reduxjs/toolkit";
+import {authReducer} from "../features/auth";
+import {appReducer} from "./index";
 
 // объединяя reducer-ы с помощью combineReducers,
 // мы задаём структуру нашего единственного объекта-состояния
@@ -11,6 +12,7 @@ const rootReducer = combineReducers({
     tasks: tasksReducer,
     todoLists: todoListsReducer,
     app: appReducer,
+    auth: authReducer
 })
 // непосредственно создаём store
 export const store = configureStore({
@@ -22,10 +24,6 @@ export type AppRootStateType = ReturnType<typeof store.getState>
 
 
 export type AppDispatch = ThunkDispatch<AppRootStateType, unknown, AnyAction>
-// export type AppDispatch = typeof store.dispatch
-
-
-// export type AppActionType = TodoListActionType | TaskActionType | typeof setAppStatusAC| typeof setAppErrorAC
 
 export type AppThunk<ReturnType = void> = ThunkAction<ReturnType, AppRootStateType, unknown, AnyAction>
 

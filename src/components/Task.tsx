@@ -1,9 +1,9 @@
 import React, {ChangeEvent, useCallback} from 'react';
 import {EditableSpan} from './EditableSpan';
 import css from "./TodoList.module.css"
-import {TaskStatuses} from '../api/todoList-api'
-import {removeTask, TaskTypeState, updateTask} from "../reducers/tasks-reducer";
-import {useAppDispatch} from "../app/hooks/hooks";
+import {TaskStatuses} from '../features/todolists/todoList-api'
+import {removeTask, TaskTypeState, updateTask} from "../features/tasks/tasks-reducer";
+import {useAppDispatch} from "../common/hooks/hooks";
 import {Checkbox, IconButton, ListItem} from "@mui/material";
 import {DeleteForeverOutlined} from "@mui/icons-material"
 

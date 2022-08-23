@@ -1,10 +1,11 @@
-import {
-    addTodoListTC, changeFilterTodoListAC, deleteTodoListTC,
-    FilterValuesType,
-    TodolistDomainType,
-    todoListsReducer, updateTodoListTC
-} from './todoLists-reducer';
 import {v1} from 'uuid';
+import {
+    addTodoListTC, changeFilterTodoListAC,
+    deleteTodoListTC, FilterValuesType,
+    TodolistDomainType,
+    todoListsReducer,
+    updateTodoListTC
+} from "./todoLists-reducer";
 
 let todolistId1: string;
 let todolistId2: string;

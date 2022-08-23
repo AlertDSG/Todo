@@ -8,10 +8,10 @@ import {
     deleteTodoListTC,
     TodolistDomainType,
     updateTodoListTC
-} from "../reducers/todoLists-reducer";
+} from "../features/todolists/todoLists-reducer";
 import {Task} from "./Task";
-import {useAppDispatch, useAppSelector} from "../app/hooks/hooks";
-import {createTasks, fetchTasks} from "../reducers/tasks-reducer";
+import {useAppDispatch, useAppSelector} from "../common/hooks/hooks";
+import {createTasks, fetchTasks} from "../features/tasks/tasks-reducer";
 import {Button, IconButton, List} from "@mui/material";
 import {DeleteForeverOutlined} from "@mui/icons-material";
 
