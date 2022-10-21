@@ -2,10 +2,11 @@ import React, {ChangeEvent, useCallback} from 'react';
 import { EditableSpan } from './EditableSpan';
 import css from "./TodoList.module.css"
 import {TaskStatuses} from '../api/todoList-api'
-import {deleteTaskTC, TaskTypeState, updateTasksTC} from "../reducers/tasks-reducer";
-import {useAppDispatch, useAppSelector} from "../app/hooks/hooks";
+import {deleteTaskTC, TaskTypeState} from "../reducers/tasks-reducer";
+import {useAppDispatch} from "../app/hooks/hooks";
 import {Checkbox, IconButton, ListItem} from "@mui/material";
 import {DeleteForeverOutlined} from "@mui/icons-material"
+import {updateTasks} from "../sagas/tasks-sagas";
 
 type OnlyTaskType ={
     task: TaskTypeState
@@ -23,12 +24,12 @@ export const Task: React.FC<OnlyTaskType> = React.memo(({task, todoListId}) => {
 
     const onChangeInputCheckedHandler = useCallback((e: ChangeEvent<HTMLInputElement>) => {
         console.log(e.currentTarget.checked)
-         dispatch(updateTasksTC(task.id,{status: e.currentTarget.checked ? TaskStatuses.Completed : TaskStatuses.New}, todoListId))
+         dispatch(updateTasks(task.id,{status: e.currentTarget.checked ? TaskStatuses.Completed : TaskStatuses.New}, todoListId))
 
     },[dispatch, task.id, todoListId])
 
     const changeTitleForTask = useCallback((title: string) => {
-        dispatch(updateTasksTC(task.id,{title}, todoListId))
+        dispatch(updateTasks(task.id,{title}, todoListId))
 
     }, [todoListId,task.id, dispatch])
 

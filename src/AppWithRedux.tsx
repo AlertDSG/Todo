@@ -18,8 +18,8 @@ import {
 } from "@mui/material";
 import {MenuTwoTone} from "@mui/icons-material";
 import {ErrorSnackbar} from "./components/ErrorSnackbar/ErrorSnackbar";
-import {initializeApp} from "./app/app-reducer";
 import {setTodoLists, addTodoList} from "./sagas/todolists-sagas";
+import {initializeApp} from "./sagas/auth-sagas";
 
 function AppWithRedux() {
 

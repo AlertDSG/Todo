@@ -1,7 +1,5 @@
-import {todoListsApi, TodoListsType} from "../api/todoList-api";
-import {AppThunk} from "../state/store";
-import {RequestStatusType, setAppStatusAC} from "../app/app-reducer";
-import {handleServerAppError, handleServerNetworkError} from "../utils/error-utils";
+import {TodoListsType} from "../api/todoList-api";
+import {RequestStatusType} from "../app/app-reducer";
 export type FilterValuesType = 'all' | 'active' | 'completed';
 
 export type TodolistDomainType = TodoListsType & {
@@ -40,7 +38,6 @@ export const todoListsReducer = (state: TodolistDomainType[] = initialState, act
 
 }
 
-
 export const removeTodoListAC = (id: string) => ({type: 'REMOVE-TODOLIST', id}) as const
 export type RemoveTodoListAT = ReturnType<typeof removeTodoListAC>
 export const addTodoListAC = (todoList: TodoListsType) => ({type: 'ADD-TODOLIST', todoList}) as const
@@ -68,20 +65,3 @@ export const setTodoListsAC = (todoLists: TodoListsType[]) => ({
     todoLists
 }) as const
 export type SetTodoListsAT = ReturnType<typeof setTodoListsAC>
-
-export const deleteTodoListTC = (id: string): AppThunk => (dispatch) => {
-    dispatch(setAppStatusAC('loading'))
-    dispatch(changeTodolistEntityStatusAC(id, 'loading'))
-    todoListsApi.deleteTodolist(id)
-        .then(res => {
-            if (res.data.resultCode === 0) {
-                dispatch(removeTodoListAC(id))
-                dispatch(setAppStatusAC('succeeded'))
-            } else {
-                handleServerAppError(res.data, dispatch)
-            }
-        })
-        .catch(err => {
-            handleServerNetworkError(err, dispatch)
-        })
-}

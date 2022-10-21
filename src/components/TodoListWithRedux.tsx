@@ -4,14 +4,14 @@ import {UniversalFormInput} from "./UniversalFormInput";
 
 import {EditableSpan} from "./EditableSpan";
 import {
-    changeFilterTodoListAC, deleteTodoListTC, TodolistDomainType,
+    changeFilterTodoListAC, TodolistDomainType,
 } from "../reducers/todoLists-reducer";
 import {Task} from "./Task";
 import {useAppSelector, useAppDispatch} from "../app/hooks/hooks";
-import {createTasksTC, setTasksTC} from "../reducers/tasks-reducer";
 import {Button, IconButton, List} from "@mui/material";
 import {DeleteForeverOutlined} from "@mui/icons-material";
-import {updateTodoList} from "../sagas/todolists-sagas";
+import {deleteTodoList, updateTodoList} from "../sagas/todolists-sagas";
+import {createTasks, setTasks} from "../sagas/tasks-sagas";
 
 
 type TodoListPropsType = {
@@ -20,7 +20,7 @@ type TodoListPropsType = {
 
 export const TodoListWithRedux: React.FC<TodoListPropsType> = React.memo(({todoList}) => {
     useEffect(() => {
-        dispatch(setTasksTC(todoList.id))
+        dispatch(setTasks(todoList.id))
     },[])
 
     let tasks = useAppSelector(state => state.tasks[todoList.id])
@@ -35,7 +35,7 @@ export const TodoListWithRedux: React.FC<TodoListPropsType> = React.memo(({todoL
     }
 
     const onClickDeleteTDHandler = useCallback(() => {
-        dispatch(deleteTodoListTC(todoList.id))
+        dispatch(deleteTodoList(todoList.id))
     },[todoList.id])
 
     const changeTitleForTodoList = useCallback((title: string) => {
@@ -43,7 +43,7 @@ export const TodoListWithRedux: React.FC<TodoListPropsType> = React.memo(({todoL
     }, [todoList.id])
 
     const addTask = useCallback((value: string) => {
-         dispatch(createTasksTC(todoList.id,value))
+         dispatch(createTasks(todoList.id,value))
     }, [todoList.id])
 
     const buttonAll = todoList.filter === 'all' ? "secondary" : 'primary'

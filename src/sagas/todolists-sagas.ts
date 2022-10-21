@@ -3,7 +3,13 @@ import {setAppStatusAC} from "../app/app-reducer";
 import {AxiosResponse} from "axios";
 import {ResponseType, todoListsApi, TodoListsType} from "../api/todoList-api";
 import {handleServerAppError} from "../utils/error-utils";
-import {addTodoListAC, changeTodoListAC, setTodoListsAC} from "../reducers/todoLists-reducer";
+import {
+    addTodoListAC,
+    changeTodoListAC,
+    changeTodolistEntityStatusAC,
+    removeTodoListAC,
+    setTodoListsAC
+} from "../reducers/todoLists-reducer";
 
 
 export function* setTodoListsWorkerSaga() {
@@ -41,8 +47,23 @@ export function* updateTodoListWorkerSaga(action: ReturnType<typeof updateTodoLi
 
 export const updateTodoList = (todoId: string, title: string) => ({type: 'TODO/UPDATE-TODO', todoId, title})
 
+export function* deleteTodoListWorkerSaga(action: ReturnType<typeof deleteTodoList>) {
+    yield put(setAppStatusAC('loading'))
+    yield put(changeTodolistEntityStatusAC(action.todoId, 'loading'))
+    const res: AxiosResponse<ResponseType> = yield call(todoListsApi.deleteTodolist, action.todoId)
+    if (res.data.resultCode === 0) {
+        yield put(removeTodoListAC(action.todoId))
+        yield put(setAppStatusAC('succeeded'))
+    } else {
+        handleServerAppError(res.data, put)
+    }
+}
+
+export const deleteTodoList = (todoId: string) => ({type: 'TODO/DELETE-TODO', todoId})
+
 export function* todoWatcherSaga() {
     yield  takeEvery('TODO/SET-TODO', setTodoListsWorkerSaga)
     yield  takeEvery('TODO/ADD-TODO', addTodoListWorkerSaga)
     yield  takeEvery('TODO/UPDATE-TODO', updateTodoListWorkerSaga)
+    yield  takeEvery('TODO/DELETE-TODO', deleteTodoListWorkerSaga)
 }

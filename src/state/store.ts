@@ -5,11 +5,12 @@ import {
     todoListsReducer
 } from '../reducers/todoLists-reducer';
 import thunkMiddleware, {ThunkAction, ThunkDispatch} from "redux-thunk";
-import {AppActionsType, appReducer, initializeAppSaga} from "../app/app-reducer";
+import {AppActionsType, appReducer} from "../app/app-reducer";
 import createSagaMiddleware from 'redux-saga'
-import {takeEvery } from 'redux-saga/effects'
 import {authReducer} from "../reducers/auth-reducer";
 import {todoWatcherSaga} from "../sagas/todolists-sagas";
+import {tasksWatcherSaga} from "../sagas/tasks-sagas";
+import {authWatcherSaga} from "../sagas/auth-sagas";
 
 // объединяя reducer-ы с помощью combineReducers,
 // мы задаём структуру нашего единственного объекта-состояния
@@ -27,8 +28,10 @@ export const store = createStore(rootReducer, applyMiddleware(thunkMiddleware, s
 sagaMiddleware.run(rootWatcher)
 
 function* rootWatcher() {
-    yield  takeEvery('APP/INITIALIZE-APP', initializeAppSaga)
-    yield  todoWatcherSaga()
+    yield* authWatcherSaga()
+    yield* todoWatcherSaga()
+    yield* tasksWatcherSaga()
+
 }
 
 // определить автоматически тип всего объекта состояния

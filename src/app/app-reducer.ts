@@ -1,8 +1,3 @@
-import {call, put} from "redux-saga/effects";
-import {authApi, MeDate} from "../api/auth-api";
-import {AxiosResponse} from "axios";
-import {ResponseType} from "../api/todoList-api";
-import {setIsLoggedInAc} from "../reducers/auth-reducer";
 
 export type RequestStatusType = 'idle' | 'loading' | 'succeeded' | 'failed'
 
@@ -46,15 +41,6 @@ export const setAppInitializedAC = (initial: boolean) => {
     } as const
 }
 
-export function* initializeAppSaga() {
-    const res: AxiosResponse<ResponseType<MeDate>> = yield call(authApi.me)
-    if (res.data.resultCode === 0) {
-        yield put(setIsLoggedInAc(true))
-    }
-    yield put(setAppInitializedAC(true))
-}
-
-export const initializeApp = () => ({type: 'APP/INITIALIZE-APP'})
 
 export type AppActionsType =
     ReturnType<typeof setAppStatusAC>
