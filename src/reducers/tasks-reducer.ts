@@ -1,4 +1,4 @@
-import {AddTodoListsAT, changeTodolistEntityStatusAC, RemoveTodoListAT, SetTodoListsAT} from "./todoLists-reducer";
+import {AddTodoListsAT, RemoveTodoListAT, SetTodoListsAT} from "./todoLists-reducer";
 import {TaskPriorities, TaskStatuses, TaskType, todoListsApi, UpdateTaskModelType} from "../api/todoList-api";
 import {AppThunk} from "../state/store";
 import {setAppStatusAC} from "../app/app-reducer";

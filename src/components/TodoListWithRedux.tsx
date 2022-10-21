@@ -4,16 +4,14 @@ import {UniversalFormInput} from "./UniversalFormInput";
 
 import {EditableSpan} from "./EditableSpan";
 import {
-    changeFilterTodoListAC,
-    deleteTodoListTC,
-    TodolistDomainType,
-    updateTodoListTC
+    changeFilterTodoListAC, deleteTodoListTC, TodolistDomainType,
 } from "../reducers/todoLists-reducer";
 import {Task} from "./Task";
 import {useAppSelector, useAppDispatch} from "../app/hooks/hooks";
 import {createTasksTC, setTasksTC} from "../reducers/tasks-reducer";
 import {Button, IconButton, List} from "@mui/material";
 import {DeleteForeverOutlined} from "@mui/icons-material";
+import {updateTodoList} from "../sagas/todolists-sagas";
 
 
 type TodoListPropsType = {
@@ -21,7 +19,6 @@ type TodoListPropsType = {
 }
 
 export const TodoListWithRedux: React.FC<TodoListPropsType> = React.memo(({todoList}) => {
-    console.log(todoList)
     useEffect(() => {
         dispatch(setTasksTC(todoList.id))
     },[])
@@ -42,7 +39,7 @@ export const TodoListWithRedux: React.FC<TodoListPropsType> = React.memo(({todoL
     },[todoList.id])
 
     const changeTitleForTodoList = useCallback((title: string) => {
-         dispatch(updateTodoListTC(todoList.id, title))
+         dispatch(updateTodoList(todoList.id, title))
     }, [todoList.id])
 
     const addTask = useCallback((value: string) => {

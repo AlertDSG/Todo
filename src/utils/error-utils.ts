@@ -4,13 +4,13 @@ import {ResponseType} from "../api/todoList-api";
 
 
 // generic function
-export const handleServerAppError = <T>(data: ResponseType<T>, dispatch: Dispatch<AppActionsType>) => {
+export const handleServerAppError = <T>(data: ResponseType<T>, put: any) => {
     if (data.messages.length) {
-        dispatch(setAppErrorAC(data.messages[0]))
+        put(setAppErrorAC(data.messages[0]))
     } else {
-        dispatch(setAppErrorAC('Some error occurred'))
+        put(setAppErrorAC('Some error occurred'))
     }
-    dispatch(setAppStatusAC('failed'))
+    put(setAppStatusAC('failed'))
 }
 
 export const handleServerNetworkError = (error: { message: string }, dispatch: Dispatch<AppActionsType>) => {

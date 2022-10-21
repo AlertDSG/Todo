@@ -14,6 +14,7 @@ export const EditableSpan = React.memo((props: EditableSpanType) => {
     const [value, setValue] = useState<string>(props.title)
 
     const onDoubleClickHandler = () => {
+        debugger
         setEditMode(true)
     }
 
@@ -36,7 +37,7 @@ export const EditableSpan = React.memo((props: EditableSpanType) => {
     return (
 
         <>
-            {props.entityStatus &&  editMode
+            { editMode
                 ? <input onKeyPress={onKeyPressHandler} onChange={onChangeHandler} onBlur={onBlurHandler} value={value} autoFocus/>
                 : <span onDoubleClick={onDoubleClickHandler}>{props.title}</span>}
         </>

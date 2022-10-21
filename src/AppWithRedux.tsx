@@ -3,7 +3,6 @@ import React, {useCallback, useEffect} from 'react';
 import './App.css';
 
 import {UniversalFormInput} from './components/UniversalFormInput';
-import {addTodoListTC, setTodoListsTC} from './reducers/todoLists-reducer';
 import { TodoListWithRedux } from './components/TodoListWithRedux';
 import {useAppDispatch, useAppSelector} from "./app/hooks/hooks";
 import {
@@ -12,13 +11,15 @@ import {
     Container,
     Grid,
     IconButton,
-    LinearProgress, Menu,
+    LinearProgress,
     Paper,
     Toolbar,
     Typography
 } from "@mui/material";
 import {MenuTwoTone} from "@mui/icons-material";
 import {ErrorSnackbar} from "./components/ErrorSnackbar/ErrorSnackbar";
+import {initializeApp} from "./app/app-reducer";
+import {setTodoLists, addTodoList} from "./sagas/todolists-sagas";
 
 function AppWithRedux() {
 
@@ -27,12 +28,12 @@ function AppWithRedux() {
     const dispatch = useAppDispatch()
 
     useEffect(() => {
-
-        dispatch(setTodoListsTC())
+        dispatch(initializeApp())
+        dispatch(setTodoLists())
     },[dispatch])
 
     const addNewTodoList = useCallback((newTodoList: string) => {
-        dispatch(addTodoListTC(newTodoList))
+        dispatch(addTodoList(newTodoList))
     }, [dispatch])
 
     const todolistItems = todoLists.map(t => {
