@@ -92,7 +92,7 @@ test('correct task should be added to correct array', () => {
 
     const task: TaskType = {
         id: "1",
-        title: "juce",
+        title: "juice",
         todoListId: 'todolistId2',
         status: TaskStatuses.New,
         addedDate: '',
@@ -103,19 +103,19 @@ test('correct task should be added to correct array', () => {
         priority: 0
     }
 
-    const action = createTasks.fulfilled({task},'',{id: '1', title: "juce"});
+    const action = createTasks.fulfilled({task},'',{id: '1', title: "juice"});
 
     const endState = tasksReducer(startState, action)
 
     expect(endState["todolistId1"].length).toBe(2);
     expect(endState["todolistId2"].length).toBe(4);
-    expect(endState["todolistId2"][0].title).toBe("juce");
+    expect(endState["todolistId2"][0].title).toBe("juice");
 })
 
 test('status of specified task should be changed', () => {
     const task: TaskType = {
         id: "1",
-        title: "juce",
+        title: "juice",
         todoListId: 'todolistId2',
         status: TaskStatuses.New,
         addedDate: '',
@@ -136,7 +136,7 @@ test('status of specified task should be changed', () => {
 test('title of specified task should be changed', () => {
     const task: TaskType = {
         id: "1",
-        title: "juce",
+        title: "juice",
         todoListId: 'todolistId2',
         status: TaskStatuses.New,
         addedDate: '',

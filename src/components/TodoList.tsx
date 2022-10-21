@@ -66,7 +66,7 @@ export const TodoList: React.FC<TodoListPropsType> = React.memo(({todoList}) => 
                                          task={t}
                     />)
                 }
-
+                {!tasks.length && <div style={{padding: '10px', color: 'grey'}}>No task</div>}
             </List>
             <div>
                 <Button color={buttonAll}
