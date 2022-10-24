@@ -1,20 +1,18 @@
-import {AppActionsType, setAppErrorAC, setAppStatusAC,} from '../app/app-reducer'
-import { Dispatch } from 'redux'
+import {setAppErrorAC, setAppStatusAC} from '../app/app-reducer'
 import {ResponseType} from "../api/todoList-api";
+import {put} from "redux-saga/effects";
 
-
-// generic function
-export const handleServerAppError = <T>(data: ResponseType<T>, put: any) => {
+export function* handleServerAppErrorSaga<T>(data: ResponseType<T>) {
     if (data.messages.length) {
-        put(setAppErrorAC(data.messages[0]))
+        yield  put(setAppErrorAC(data.messages[0]))
     } else {
-        put(setAppErrorAC('Some error occurred'))
+        yield  put(setAppErrorAC('Some error occurred'))
     }
-    put(setAppStatusAC('failed'))
+    yield put(setAppStatusAC('failed'))
 }
 
-export const handleServerNetworkError = (error: { message: string }, dispatch: Dispatch<AppActionsType>) => {
-    dispatch(setAppErrorAC(error.message))
-    dispatch(setAppStatusAC('failed'))
+export function* handleServerNetworkErrorSaga(error: { message: string }) {
+    yield put(setAppErrorAC(error.message))
+    yield put(setAppStatusAC('failed'))
 }
 

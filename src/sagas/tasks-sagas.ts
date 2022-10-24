@@ -9,11 +9,12 @@ import {
     UpdateDomainTaskModelType, updateTaskAC,
 } from "../reducers/tasks-reducer";
 import {AppRootStateType} from "../state/store";
+import {handleServerAppErrorSaga, handleServerNetworkErrorSaga} from "../utils/error-utils";
 
 export function* setTasksWorkerSaga(action: ReturnType<typeof setTasks>) {
     yield put(setAppStatusAC('loading'))
-    const res: AxiosResponse<GetTasksResponse> = yield call(todoListsApi.getTasks, action.todoId)
-    yield put(setTasksAC(res.data.items, action.todoId))
+    const data: GetTasksResponse = yield call(todoListsApi.getTasks, action.todoId)
+    yield put(setTasksAC(data.items, action.todoId))
     yield put(setAppStatusAC('succeeded'))
 }
 
@@ -21,13 +22,17 @@ export const setTasks = (todoId: string) => ({type: 'TASKS/SET-TASKS', todoId})
 
 export function* createTasksWorkerSaga(action: ReturnType<typeof createTasks>) {
     yield put(setAppStatusAC('loading'))
-    const res: AxiosResponse<ResponseType<{ item: TaskType }>> = yield call(todoListsApi.createTask, action.todoId, action.title)
-    if (res.data.resultCode === 0) {
-        yield put(addTaskAC(res.data.data.item))
-        yield put(setAppStatusAC('succeeded'))
+    try {
+        const data: ResponseType<{ item: TaskType }> = yield call(todoListsApi.createTask, action.todoId, action.title)
+        if (data.resultCode === 0) {
+            yield put(addTaskAC(data.data.item))
+            yield put(setAppStatusAC('succeeded'))
+        } else {
+            yield* handleServerAppErrorSaga(data)
+        }
+    } catch (error: any) {
+        yield* handleServerNetworkErrorSaga(error)
     }
-    // yield put(setTasksAC(res.data.items, action.todoId))
-    // yield put(setAppStatusAC('succeeded'))
 }
 
 export const createTasks = (todoId: string, title: string) => ({type: 'TASKS/ADD-TASK', todoId, title})
@@ -37,7 +42,7 @@ const tasks = (state: AppRootStateType) => state.tasks
 export function* updateTasksWorkerSaga(action: ReturnType<typeof updateTasks>) {
     yield put(setAppStatusAC('loading'))
     yield put(setTasksEntityStatusAC(action.todoListId, action.taskId, false))
-    const newTasks: TasksStateType= yield select(tasks)
+    const newTasks: TasksStateType = yield select(tasks)
     const task = newTasks[action.todoListId].find(t => t.id === action.taskId)
     console.log(task)
 
@@ -48,7 +53,7 @@ export function* updateTasksWorkerSaga(action: ReturnType<typeof updateTasks>) {
 
     const model: UpdateTaskModelType = {
         ...task,
-         ...action.domainModel
+        ...action.domainModel
     }
 
     const res: AxiosResponse<ResponseType<{ item: TaskType }>> = yield call(todoListsApi.updateTask, action.todoListId, action.taskId, model)
@@ -58,7 +63,12 @@ export function* updateTasksWorkerSaga(action: ReturnType<typeof updateTasks>) {
     }
 }
 
-export const updateTasks = (taskId: string, domainModel: UpdateDomainTaskModelType, todoListId: string) => ({type: 'TASKS/UPDATE-TASK', taskId, domainModel, todoListId})
+export const updateTasks = (taskId: string, domainModel: UpdateDomainTaskModelType, todoListId: string) => ({
+    type: 'TASKS/UPDATE-TASK',
+    taskId,
+    domainModel,
+    todoListId
+})
 
 export function* deleteTaskWorkerSaga(action: ReturnType<typeof removeTask>) {
     yield put(setAppStatusAC('loading'))
