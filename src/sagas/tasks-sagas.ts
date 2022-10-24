@@ -3,7 +3,7 @@ import {setAppStatusAC} from "../app/app-reducer";
 import {AxiosResponse} from "axios";
 import {GetTasksResponse, ResponseType, TaskType, todoListsApi, UpdateTaskModelType} from "../api/todoList-api";
 import {
-    addTaskAC,
+    addTaskAC, removeTaskAC,
     setTasksAC,
     setTasksEntityStatusAC, TasksStateType,
     UpdateDomainTaskModelType, updateTaskAC,
@@ -60,8 +60,20 @@ export function* updateTasksWorkerSaga(action: ReturnType<typeof updateTasks>) {
 
 export const updateTasks = (taskId: string, domainModel: UpdateDomainTaskModelType, todoListId: string) => ({type: 'TASKS/UPDATE-TASK', taskId, domainModel, todoListId})
 
+export function* deleteTaskWorkerSaga(action: ReturnType<typeof removeTask>) {
+    yield put(setAppStatusAC('loading'))
+    const res: AxiosResponse<ResponseType> = yield call(todoListsApi.deleteTask, action.todoId, action.taskId)
+    if (res.data.resultCode === 0) {
+        yield put(removeTaskAC(action.todoId, action.taskId))
+        yield put(setAppStatusAC('succeeded'))
+    }
+}
+
+export const removeTask = (todoId: string, taskId: string) => ({type: 'TASKS/DELETE-TASK', todoId, taskId})
+
 export function* tasksWatcherSaga() {
     yield  takeEvery('TASKS/SET-TASKS', setTasksWorkerSaga)
     yield  takeEvery('TASKS/ADD-TASK', createTasksWorkerSaga)
     yield  takeEvery('TASKS/UPDATE-TASK', updateTasksWorkerSaga)
+    yield  takeEvery('TASKS/DELETE-TASK', deleteTaskWorkerSaga)
 }

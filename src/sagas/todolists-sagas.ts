@@ -27,8 +27,6 @@ export function* addTodoListWorkerSaga(action: ReturnType<typeof addTodoList>) {
     if (res.data.resultCode === 0) {
         yield put(addTodoListAC(res.data.data.item))
         yield put(setAppStatusAC('succeeded'))
-    } else {
-        handleServerAppError(res.data, put)
     }
 }
 

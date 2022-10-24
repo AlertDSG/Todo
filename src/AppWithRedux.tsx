@@ -29,8 +29,12 @@ function AppWithRedux() {
 
     useEffect(() => {
         dispatch(initializeApp())
+
+    },[])
+    useEffect(() => {
         dispatch(setTodoLists())
-    },[dispatch])
+
+    },[])
 
     const addNewTodoList = useCallback((newTodoList: string) => {
         dispatch(addTodoList(newTodoList))

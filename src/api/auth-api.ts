@@ -13,8 +13,7 @@ export const instance = axios.create({
 export const authApi = {
     me() {
         return instance.get<ResponseType<MeDate>>(`auth/me`)
-            .then(res => res.data
-            )
+            .then(res => res.data)
     }
 }
 

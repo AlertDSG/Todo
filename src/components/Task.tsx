@@ -2,11 +2,11 @@ import React, {ChangeEvent, useCallback} from 'react';
 import { EditableSpan } from './EditableSpan';
 import css from "./TodoList.module.css"
 import {TaskStatuses} from '../api/todoList-api'
-import {deleteTaskTC, TaskTypeState} from "../reducers/tasks-reducer";
-import {useAppDispatch} from "../app/hooks/hooks";
+import {TaskTypeState} from "../reducers/tasks-reducer";
+import {useAppDispatch, useAppSelector} from "../app/hooks/hooks";
 import {Checkbox, IconButton, ListItem} from "@mui/material";
 import {DeleteForeverOutlined} from "@mui/icons-material"
-import {updateTasks} from "../sagas/tasks-sagas";
+import {removeTask, updateTasks} from "../sagas/tasks-sagas";
 
 type OnlyTaskType ={
     task: TaskTypeState
@@ -14,12 +14,13 @@ type OnlyTaskType ={
 }
 
 export const Task: React.FC<OnlyTaskType> = React.memo(({task, todoListId}) => {
-
+    const taskNew = useAppSelector(state => state.tasks[todoListId].find(t => t.id === task.id))
+    console.log(taskNew)
 
     const dispatch = useAppDispatch()
 
     const deleteTask = useCallback(() => {
-         dispatch(deleteTaskTC(todoListId, task.id))
+         dispatch(removeTask(todoListId, task.id))
     },[dispatch, todoListId, task.id])
 
     const onChangeInputCheckedHandler = useCallback((e: ChangeEvent<HTMLInputElement>) => {

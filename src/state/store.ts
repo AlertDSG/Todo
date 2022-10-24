@@ -31,7 +31,6 @@ function* rootWatcher() {
     yield* authWatcherSaga()
     yield* todoWatcherSaga()
     yield* tasksWatcherSaga()
-
 }
 
 // определить автоматически тип всего объекта состояния
